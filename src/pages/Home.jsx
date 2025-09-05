@@ -33,7 +33,6 @@ export default function Home() {
 
   return (
     <div className="relative">
-      {/* ----- HERO ----- */}
       <section id="home" className="relative isolate overflow-hidden">
         <ParallaxBg />
 
@@ -73,7 +72,6 @@ export default function Home() {
                 </a>
               </div>
 
-              {/* Stats */}
               <div className="mt-10 grid grid-cols-3 gap-6 text-sm">
                 {[
                   { icon: <Users className="h-4 w-4" />, label: "Solo builder", value: "1" },
@@ -93,7 +91,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Right-side visual / placeholder block */}
             <div className="relative">
               <div className="relative rounded-3xl p-[1px] bg-gradient-to-r from-[hsl(20_95%_60%/.35)] to-[hsl(330_85%_65%/.35)] shadow-xl">
                 <div className="rounded-[calc(theme(borderRadius.3xl)-1px)] bg-white border border-[hsl(220_13%_91%)] h-[320px] md:h-[380px] lg:h-[420px] overflow-hidden">
@@ -111,14 +108,12 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-              {/* Glow */}
               <div className="absolute -z-10 inset-0 blur-3xl bg-[radial-gradient(35rem_35rem_at_80%_0%,hsl(330_85%_65%/.18),transparent)]" />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ----- FEATURES ----- */}
       <section id="features" className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(35rem_35rem_at_20%_0%,hsl(20_95%_60%/.18),transparent)]" />
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20 md:py-28">
@@ -151,7 +146,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ----- HOW IT WORKS ----- */}
       <section id="how-it-works" className="relative overflow-hidden">
         <div className="absolute inset-0 -z-10 bg-[radial-gradient(35rem_35rem_at_20%_0%,hsl(20_95%_60%/.18),transparent)]" />
         <div className="mx-auto max-w-7xl px-6 lg:px-10 py-20 md:py-28">
@@ -181,7 +175,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ----- CTA / MEET DEV ----- */}
       <section id="meet-dev" className="mx-auto max-w-7xl px-6 lg:px-10 py-14 md:py-20">
         <div className="relative rounded-3xl border border-[hsl(220_13%_91%)] bg-white text-[hsl(234_12%_12%)] p-8 md:p-12 overflow-hidden">
           <div className="absolute -inset-1 rounded-[1.6rem] bg-gradient-to-r from-[hsl(20_95%_60%/.18)] to-[hsl(330_85%_65%/.18)] -z-10" />
