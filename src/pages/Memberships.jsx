@@ -48,14 +48,10 @@ const Memberships = () => {
         key: order.data.keyId,
         amount,
         currency,
-        name: notes.firstName + " " + notes.lastName,
+        name: "DevMatch",
         description: "Meet your next collaborator",
         image: "https://dndesigns.co.in/wp-content/uploads/2024/09/5.png",
         order_id: orderId,
-        prefill: {
-          name: "DevMatch",
-          email: notes.emailId,
-        },
         notes: {
           firstName: notes.firstName,
           lastName: notes.lastName,
