@@ -12,6 +12,7 @@ const navItems = [
   { to: "/#how-it-works", label: "How it Works" },
   // Meet Dev is a separate page (NOT a hash link)
   { to: "/meet-dev", label: "Meet Dev" },
+  { to: "/memberships", label: "Memberships" },
 ];
 
 const Navbar = () => {
