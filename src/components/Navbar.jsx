@@ -1,17 +1,17 @@
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../lib/constants";
 import { removeUser } from "../utils/userSlice";
 import { useState } from "react";
-import { Menu, X, LogOut, Settings, UserRound, Users as UsersIcon, Bell } from "lucide-react";
+import { Menu, X, LogOut, Settings, UserRound, Users as UsersIcon } from "lucide-react";
 
 const navItems = [
   { to: "/#home", label: "Home" },
-  { to: "#features", label: "Features" },
-  { to: "#how-it-works", label: "How it Works" },
-  { to: "#get-started", label: "Get Started" },
-  { to: "#meet-dev", label: "Meet Dev" },
+  { to: "/#features", label: "Features" },
+  { to: "/#how-it-works", label: "How it Works" },
+  // Meet Dev is a separate page (NOT a hash link)
+  { to: "/meet-dev", label: "Meet Dev" },
 ];
 
 const Navbar = () => {
@@ -39,32 +39,28 @@ const Navbar = () => {
             <div className="relative rounded-xl p-[1px] bg-gradient-to-r from-[hsl(20_95%_60%/.45)] to-[hsl(330_85%_65%/.45)]">
               <div className="rounded-[calc(theme(borderRadius.xl)-1px)] bg-white">
                 <img
-                  className="w-12 h-12 object-contain p-1.5"
+                  className="w-12 h-12 object-cover"
                   src="https://dndesigns.co.in/wp-content/uploads/2024/09/5.png"
-                  alt="DevMatch"
+                  alt="DevMatch logo"
                 />
               </div>
             </div>
-            <span className="text-xl font-bold tracking-tight text-[hsl(234_12%_12%)]">
-              DevMatch
-            </span>
+            <span className="text-xl font-bold tracking-tight text-[hsl(234_12%_12%)]">DevMatch</span>
           </Link>
 
           {/* Desktop nav */}
-          {/* Desktop nav */}
-<div className="hidden lg:flex items-center gap-7">
-  {navItems.map((item) => (
-    <a
-      key={item.label}
-      href={item.to.startsWith('/#') ? item.to : `/${item.to.replace(/^#/, '#')}`}
-      className="group relative text-sm font-medium text-[hsl(232_10%_45%)] hover:text-[hsl(234_12%_12%)] transition"
-    >
-      {item.label}
-      <span className="pointer-events-none absolute left-0 -bottom-1 h-[2px] w-0 rounded-full bg-gradient-to-r from-[hsl(20_95%_60%)] to-[hsl(330_85%_65%)] transition-all duration-300 group-hover:w-full" />
-    </a>
-  ))}
-</div>
-
+          <div className="hidden lg:flex items-center gap-7">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                className="group relative text-sm font-medium text-[hsl(232_10%_45%)] hover:text-[hsl(234_12%_12%)] transition"
+              >
+                {item.label}
+                <span className="pointer-events-none absolute left-0 -bottom-1 h-[2px] w-0 rounded-full bg-gradient-to-r from-[hsl(20_95%_60%)] to-[hsl(330_85%_65%)] transition-all duration-300 group-hover:w-full" />
+              </Link>
+            ))}
+          </div>
 
           {/* Right actions */}
           <div className="hidden lg:flex items-center gap-4">
@@ -87,7 +83,7 @@ const Navbar = () => {
                   Welcome, <span className="font-semibold text-[hsl(234_12%_12%)]">{user.firstName}</span>
                 </span>
 
-                {/* Avatar dropdown (daisyUI classes kept if you use it) */}
+                {/* Avatar dropdown (daisyUI-compatible) */}
                 <div className="dropdown dropdown-end">
                   <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                     <div className="w-10 rounded-full ring-1 ring-[hsl(220_13%_91%)]">
@@ -99,7 +95,10 @@ const Navbar = () => {
                       />
                     </div>
                   </div>
-                  <ul tabIndex={0} className="menu menu-md text-gray-600 dropdown-content bg-white rounded-xl z-10 mt-3 w-56 p-2 border border-[hsl(220_13%_91%)] shadow-xl">
+                  <ul
+                    tabIndex={0}
+                    className="menu menu-md text-gray-600 dropdown-content bg-white rounded-xl z-10 mt-3 w-56 p-2 border border-[hsl(220_13%_91%)] shadow-xl"
+                  >
                     <li className="px-2 pt-2 pb-1 text-xs text-[hsl(232_10%_45%)]">
                       Signed in as <span className="font-medium text-[hsl(234_12%_12%)]">{user.firstName}</span>
                     </li>
@@ -146,27 +145,25 @@ const Navbar = () => {
       </div>
 
       {/* Mobile panel */}
-      {/* Mobile panel */}
-{open && (
-  <div className="lg:hidden border-t border-[hsl(220_13%_91%)] bg-white/95 backdrop-blur">
-    <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        {navItems.map((item) => (
-          <a
-            key={item.label}
-            href={item.to.startsWith('/#') ? item.to : `/${item.to.replace(/^#/, '#')}`}
-            onClick={() => setOpen(false)}
-            className="text-[hsl(234_12%_12%)] hover:text-[hsl(330_85%_45%)] font-medium"
-          >
-            {item.label}
-          </a>
-        ))}
-      </div>
-      {/* ...rest unchanged */}
-    </div>
-  </div>
-)}
-
+      {open && (
+        <div className="lg:hidden border-t border-[hsl(220_13%_91%)] bg-white/95 backdrop-blur">
+          <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col gap-4">
+            <nav className="flex flex-col gap-2">
+              {navItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to}             // works for both '/#hash' and '/meet-dev'
+                  onClick={() => setOpen(false)}
+                  className="text-[hsl(234_12%_12%)] hover:text-[hsl(330_85%_45%)] font-medium"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            {/* You can add auth buttons / profile quick links here for mobile if needed */}
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

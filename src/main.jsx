@@ -5,13 +5,18 @@ import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./pages/Login.jsx";
 import Home from "./pages/Home.jsx";
-import Profile from "./pages/Profile.jsx"
+import Profile from "./pages/Profile.jsx";
 import { Provider } from "react-redux";
 import appStore from "./utils/appStore.js";
 import Feed from "./pages/Feed.jsx";
 import Connections from "./pages/Connections.jsx";
 import Requests from "./pages/Requests.jsx";
 import Signup from "./pages/Signup.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import TermsConditions from "./pages/Terms&Conditions.jsx";
+import RefundPolicy from "./pages/RefundPolicy.jsx";
+import MeetDev from "./pages/MeetDev.jsx";
+import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -35,6 +40,10 @@ const appRouter = createBrowserRouter([
         element: <Profile />,
       },
       {
+        path: "meet-dev",
+        element: <MeetDev />,
+      },
+      {
         path: "feed",
         element: <Feed />,
       },
@@ -46,12 +55,26 @@ const appRouter = createBrowserRouter([
         path: "requests",
         element: <Requests />,
       },
+      {
+        path: "privacy-policy",
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: "terms-&-conditions",
+        element: <TermsConditions />,
+      },
+      {
+        path: "cancellation-&-refund-policy",
+        element: <RefundPolicy />,
+      },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
+  <ThemeProvider>
     <Provider store={appStore}>
       <RouterProvider router={appRouter} />
     </Provider>
+  </ThemeProvider>
 );

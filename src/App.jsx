@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { addUser } from "./utils/userSlice";
 import { useEffect } from "react";
+import Footer from "./components/Footer";
+import ThemeSwitcher from "./components/ThemeSwitcher";
 
 function App() {
   const dispatch = useDispatch();
@@ -34,6 +36,8 @@ function App() {
     <div>
       <Navbar />
       <Outlet />
+      <ThemeSwitcher />
+      <Footer />
     </div>
   );
 }
