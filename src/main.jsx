@@ -17,6 +17,7 @@ import TermsConditions from "./pages/Terms&Conditions.jsx";
 import RefundPolicy from "./pages/RefundPolicy.jsx";
 import MeetDev from "./pages/MeetDev.jsx";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
+import Memberships from "./pages/Memberships.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -66,6 +67,10 @@ const appRouter = createBrowserRouter([
       {
         path: "cancellation-&-refund-policy",
         element: <RefundPolicy />,
+      },
+      {
+        path: "memberships",
+        element: <Memberships />,
       },
     ],
   },
