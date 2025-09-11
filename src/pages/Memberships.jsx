@@ -1,5 +1,8 @@
 import axios from "axios";
 import { BASE_URL } from "../lib/constants";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const memberships = [
   {
@@ -34,8 +37,30 @@ const memberships = [
 ];
 
 const Memberships = () => {
+  const [isUserPremium, setIsUserPremium] = useState(false);
+
+  const user = useSelector((store) => store.user);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    verifyUserPremium();
+  }, []);
+
+  const verifyUserPremium = async () => {
+    const res = await axios.get(BASE_URL + "/premium/verify", {
+      withCredentials: true,
+    });
+    if (res.data.isPremium) {
+      setIsUserPremium(true);
+    }
+  };
+
   const handleBuy = async (type) => {
     try {
+      if (!user) {
+        navigate("/login");
+        return;
+      }
       const order = await axios.post(
         `${BASE_URL}/payment/create`,
         { type },
@@ -60,9 +85,8 @@ const Memberships = () => {
         theme: {
           color: "#3399cc",
         },
+        handler: verifyUserPremium,
       };
-
-      console.log(options);
 
       const rzp = new window.Razorpay(options);
       rzp.open();
@@ -71,7 +95,9 @@ const Memberships = () => {
     }
   };
 
-  return (
+  return isUserPremium ? (
+    <div>Already a premium user</div>
+  ) : (
     <div className="min-h-screen bg-gradient-to-br from-[hsl(var(--brand-start)/0.15)] to-[hsl(var(--brand-end)/0.15)] py-16 px-6">
       <h2 className="text-4xl font-bold text-center text-foreground mb-14">
         Choose Your Membership
