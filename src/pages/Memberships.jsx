@@ -61,17 +61,17 @@ const Memberships = () => {
         navigate("/login");
         return;
       }
-      const order = await axios.post(
+
+      const orderRes = await axios.post(
         `${BASE_URL}/payment/create`,
         { type },
         { withCredentials: true }
       );
-      console.log(order.data)
 
-      const { amount, currency, orderId, notes } = order.data;
+      const { amount, currency, orderId, notes, keyId } = orderRes.data;
 
       const options = {
-        key: order.data.keyId,
+        key: keyId,
         amount,
         currency,
         name: "DevMatch",
@@ -79,20 +79,54 @@ const Memberships = () => {
         image: "https://dndesigns.co.in/wp-content/uploads/2024/09/5.png",
         order_id: orderId,
         notes: {
-          firstName: notes.firstName,
-          lastName: notes.lastName,
-          email: notes.emailId,
+          firstName: notes?.firstName,
+          lastName: notes?.lastName,
+          email: notes?.emailId,
         },
-        theme: {
-          color: "#3399cc",
+        prefill: {
+          name: `${notes?.firstName || ""} ${notes?.lastName || ""}`.trim(),
+          email: notes?.emailId || "",
         },
-        handler: verifyUserPremium,
+        theme: { color: "#3399cc" },
+        handler: async function (response) {
+          try {
+            const verifyRes = await axios.post(
+              `${BASE_URL}/payment/verify`,
+              {
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature,
+              },
+              { withCredentials: true }
+            );
+
+            if (verifyRes.data?.success && verifyRes.data?.isPremium) {
+              await verifyUserPremium();
+            } else {
+              console.error("Verify failed:", verifyRes.data);
+              alert(verifyRes.data?.error || "Payment verification failed");
+            }
+          } catch (e) {
+            console.error("Verify error:", e);
+            alert("Payment verification failed");
+          }
+        },
+        modal: {
+          ondismiss: function () {},
+        },
       };
 
       const rzp = new window.Razorpay(options);
+
+      rzp.on("payment.failed", function (resp) {
+        console.error("Payment failed:", resp?.error);
+        alert("Payment failed. Please try again.");
+      });
+
       rzp.open();
     } catch (err) {
-      console.error(err.message);
+      console.error(err);
+      alert("Could not initiate payment. Try again.");
     }
   };
 
