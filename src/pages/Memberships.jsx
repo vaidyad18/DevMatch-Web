@@ -66,8 +66,9 @@ const Memberships = () => {
         { type },
         { withCredentials: true }
       );
+      console.log(order.data)
 
-      const { amount, currency, orderId, notes } = order.data.savedPayment;
+      const { amount, currency, orderId, notes } = order.data;
 
       const options = {
         key: order.data.keyId,
