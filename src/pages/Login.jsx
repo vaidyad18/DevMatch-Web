@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BASE_URL } from "../lib/constants";
@@ -130,12 +130,12 @@ const Login = () => {
 
             <p className="mt-6 text-center text-sm text-[hsl(232_10%_45%)]">
               New here?{" "}
-              <a
-                href="/signup"
+              <Link
+                to="/signup"
                 className="font-medium text-[hsl(330_85%_45%)] hover:underline"
               >
                 Create an account
-              </a>
+              </Link>
             </p>
           </div>
         </div>
