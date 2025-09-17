@@ -4,7 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../lib/constants";
 import { removeUser } from "../utils/userSlice";
 import { useState } from "react";
-import { Menu, X, LogOut, Settings, UserRound, Users as UsersIcon } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  Settings,
+  UserRound,
+  Users as UsersIcon,
+} from "lucide-react";
 
 const navItems = [
   { to: "/#home", label: "Home" },
@@ -46,7 +53,9 @@ const Navbar = () => {
                 />
               </div>
             </div>
-            <span className="text-xl font-bold tracking-tight text-[hsl(234_12%_12%)]">DevMatch</span>
+            <span className="text-xl font-bold tracking-tight text-[hsl(234_12%_12%)]">
+              DevMatch
+            </span>
           </Link>
 
           {/* Desktop nav */}
@@ -80,19 +89,52 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex items-center gap-5">
+                {/* Chat button (desktop) */}
+                <Link
+                  to="/chat"
+                  className="hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-md border border-[hsl(220_13%_91%)] text-sm font-medium text-[hsl(232_10%_45%)] hover:bg-[hsl(220_13%_96%)] transition"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z"
+                      strokeWidth="1.5"
+                    />
+                  </svg>
+                  Chat
+                </Link>
+
                 <span className="hidden xl:inline text-sm text-[hsl(232_10%_45%)]">
-                  Welcome, <span className="font-semibold text-[hsl(234_12%_12%)]">{user.firstName}</span>
+                  Welcome,{" "}
+                  <span className="font-semibold text-[hsl(234_12%_12%)]">
+                    {user.firstName}
+                  </span>
                 </span>
 
                 {/* Avatar dropdown (daisyUI-compatible) */}
                 <div className="dropdown dropdown-end">
-                  <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="btn btn-ghost btn-circle avatar"
+                  >
                     <div className="w-10 rounded-full ring-1 ring-[hsl(220_13%_91%)]">
                       <img
                         className="border rounded-full object-cover"
                         alt={user.firstName}
-                        src={user.photoURL || "https://dummyimage.com/100x100/eee/aaa&text=👤"}
-                        onError={(e) => (e.currentTarget.src = "https://dummyimage.com/100x100/eee/aaa&text=👤")}
+                        src={
+                          user.photoURL ||
+                          "https://dummyimage.com/100x100/eee/aaa&text=👤"
+                        }
+                        onError={(e) =>
+                          (e.currentTarget.src =
+                            "https://dummyimage.com/100x100/eee/aaa&text=👤")
+                        }
                       />
                     </div>
                   </div>
@@ -101,7 +143,10 @@ const Navbar = () => {
                     className="menu menu-md text-gray-600 dropdown-content bg-white rounded-xl z-10 mt-3 w-56 p-2 border border-[hsl(220_13%_91%)] shadow-xl"
                   >
                     <li className="px-2 pt-2 pb-1 text-xs text-[hsl(232_10%_45%)]">
-                      Signed in as <span className="font-medium text-[hsl(234_12%_12%)]">{user.firstName}</span>
+                      Signed in as{" "}
+                      <span className="font-medium text-[hsl(234_12%_12%)]">
+                        {user.firstName}
+                      </span>
                     </li>
                     <li>
                       <Link to="/profile" className="flex items-center gap-2">
@@ -109,7 +154,10 @@ const Navbar = () => {
                       </Link>
                     </li>
                     <li>
-                      <Link to="/connections" className="flex items-center gap-2">
+                      <Link
+                        to="/connections"
+                        className="flex items-center gap-2"
+                      >
                         <UsersIcon className="h-4 w-4" /> Connections
                       </Link>
                     </li>
@@ -119,12 +167,10 @@ const Navbar = () => {
                       </Link>
                     </li>
                     <li>
-                      <Link to="/settings" className="flex items-center gap-2">
-                        <Settings className="h-4 w-4" /> Settings
-                      </Link>
-                    </li>
-                    <li>
-                      <button onClick={handleLogout} className="flex items-center gap-2 text-red-600 hover:text-red-700">
+                      <button
+                        onClick={handleLogout}
+                        className="flex items-center gap-2 text-red-600 hover:text-red-700"
+                      >
                         <LogOut className="h-4 w-4" /> Logout
                       </button>
                     </li>
@@ -153,7 +199,7 @@ const Navbar = () => {
               {navItems.map((item) => (
                 <Link
                   key={item.label}
-                  to={item.to}             // works for both '/#hash' and '/meet-dev'
+                  to={item.to} // works for both '/#hash' and '/meet-dev'
                   onClick={() => setOpen(false)}
                   className="text-[hsl(234_12%_12%)] hover:text-[hsl(330_85%_45%)] font-medium"
                 >

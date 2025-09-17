@@ -22,8 +22,7 @@ const Connections = () => {
     }
   };
 
-  useEffect(() => {
-    if (!connections) fetchConnections();
+  useEffect(() => {fetchConnections();
   }, []); 
 
   const filtered = useMemo(() => {
