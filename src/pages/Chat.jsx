@@ -3,10 +3,13 @@ import { ArrowLeft, Send, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { createSocketConnection } from "../utils/socket";
+import axios from "axios";
+import { BASE_URL } from "../lib/constants";
 
 const Chat = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [peer, setPeer] = useState(null);
 
   const loggedInUser = useSelector((store) => store.user);
   const userId = loggedInUser?._id;
@@ -18,12 +21,17 @@ const Chat = () => {
 
     socket.emit("joinChat", {
       firstName: loggedInUser.firstName,
+      lastName: loggedInUser.lastName,
+      photoURL: loggedInUser.photoURL,
       userId,
       targetUserId,
     });
 
-    socket.on("messageRecieved", ({firstName, text}) => {
-      setMessages((messages) => [...messages, { firstName, text }]);
+    socket.on("messageRecieved", ({ firstName, lastName, photoURL, text }) => {
+      setMessages((messages) => [
+        ...messages,
+        { firstName, lastName, photoURL, text },
+      ]);
     });
 
     return () => {
@@ -31,10 +39,47 @@ const Chat = () => {
     };
   }, [userId, targetUserId, loggedInUser]);
 
+  useEffect(() => {
+    fetchChat();
+  }, [targetUserId]);
+
+  useEffect(() => {
+  const chatBox = document.getElementById("chat-box");
+  if (chatBox) {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}, [messages]);
+
+
+  const fetchChat = async () => {
+    const chat = await axios.get(BASE_URL + "/chat/" + targetUserId, {
+      withCredentials: true,
+    });
+
+    const participants = chat?.data?.chat?.participants || [];
+    const me = String(userId);
+    const other = participants.find((p) => String(p._id) !== me) || null;
+    setPeer(other);
+
+    const chatMessages = chat?.data?.chat?.messages.map((msg) => {
+      const { senderId, text } = msg;
+      return {
+        firstName: senderId?.firstName,
+        lastName: senderId?.lastName,
+        photoURL: senderId?.photoURL,
+        text,
+      };
+    });
+
+    setMessages(chatMessages);
+  };
+
   const sendMessage = () => {
     const socket = createSocketConnection();
     socket.emit("sendMessage", {
       firstName: loggedInUser.firstName,
+      lastName: loggedInUser.lastName,
+      photoURL: loggedInUser.photoURL,
       userId,
       targetUserId,
       text: newMessage,
@@ -63,36 +108,46 @@ const Chat = () => {
           <div className="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-white border border-[hsl(220_13%_91%)] overflow-hidden">
             <div className="flex items-center gap-3 px-4 sm:px-6 py-4 border-b border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)]">
               <div className="h-10 w-10 rounded-full overflow-hidden bg-[hsl(220_13%_96%)] border border-[hsl(220_13%_91%)]">
-                {/* <img
-                  src=""
-                  alt="avatar"
-                  className="h-full w-full object-cover hidden"
-                /> */}
-                <div className="h-full w-full grid place-items-center text-[hsl(232_10%_45%)]">
-                  <Users className="h-4 w-4" />
-                </div>
+                {peer?.photoURL ? (
+                  <img
+                    src={peer.photoURL}
+                    alt="avatar"
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full grid place-items-center text-[hsl(232_10%_45%)]">
+                    <Users className="h-4 w-4" />
+                  </div>
+                )}
               </div>
               <div className="min-w-0">
                 <h2 className="text-sm sm:text-base font-semibold text-[hsl(234_12%_12%)] truncate">
-                  Developer Name
+                  {peer
+                    ? `${peer.firstName} ${peer.lastName ?? ""}`
+                    : "Developer"}
                 </h2>
                 <p className="text-xs text-[hsl(232_10%_45%)]">Online</p>
               </div>
             </div>
-            <div className="h-80 px-10 pt-4 overflow-y-scroll">
+            <div id="chat-box" className="h-80 px-10 pt-4 overflow-y-scroll">
               {messages.map((msg, index) => {
                 return (
-                  <div key={index} className="chat chat-start">
+                  <div
+                    key={index}
+                    className={
+                      "chat " +
+                      (loggedInUser.firstName === msg.firstName
+                        ? "chat-end"
+                        : "chat-start")
+                    }
+                  >
                     <div className="chat-image avatar">
                       <div className="w-10 rounded-full">
-                        <img
-                          alt="Tailwind CSS chat bubble component"
-                          src="https://img.daisyui.com/images/profile/demo/kenobee@192.webp"
-                        />
+                        <img src={msg.photoURL} />
                       </div>
                     </div>
                     <div className="chat-header">
-                      {msg.firstName}
+                      {msg.firstName + " " + msg.lastName}
                       <time className="text-xs opacity-50">12:45</time>
                     </div>
                     <div className="chat-bubble">{msg.text}</div>
