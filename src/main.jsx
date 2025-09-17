@@ -18,6 +18,7 @@ import RefundPolicy from "./pages/RefundPolicy.jsx";
 import MeetDev from "./pages/MeetDev.jsx";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import Memberships from "./pages/Memberships.jsx";
+import Chat from "./pages/Chat.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ const appRouter = createBrowserRouter([
         path: "memberships",
         element: <Memberships />,
       },
+      {
+        path: "chat/:targetUserId",
+        element: <Chat />,
+      }
     ],
   },
 ]);

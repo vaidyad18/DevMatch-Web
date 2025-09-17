@@ -4,6 +4,7 @@ import { BASE_URL } from "../lib/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
 import { Users, Search } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Connections = () => {
   const dispatch = useDispatch();
@@ -23,7 +24,7 @@ const Connections = () => {
 
   useEffect(() => {
     if (!connections) fetchConnections();
-  }, []); // eslint-disable-line
+  }, []); 
 
   const filtered = useMemo(() => {
     const list = Array.isArray(connections) ? connections : [];
@@ -89,7 +90,7 @@ const Connections = () => {
                     const name = `${firstName} ${lastName}`.trim();
                     return (
                       <li key={c._id || c.id}>
-                        <div className="border border-[hsl(220_13%_91%)] rounded-xl p-4 hover:shadow-lg transition">
+                        <div className="border border-[hsl(220_13%_91%)] flex items-center justify-between rounded-xl p-4 hover:shadow-lg transition">
                           <div className="flex items-start gap-3">
                             
                             <div className="h-14 w-14 rounded-full overflow-hidden bg-[hsl(220_13%_96%)] border border-[hsl(220_13%_91%)] shrink-0">
@@ -124,6 +125,7 @@ const Connections = () => {
                               </p>
                             </div>
                           </div>
+                          <Link to={"/chat/"+c._id}><button className="bg-blue-700 text-white font-semibold px-4 py-1 rounded-md">Chat</button></Link> 
                         </div>
                       </li>
                     );
