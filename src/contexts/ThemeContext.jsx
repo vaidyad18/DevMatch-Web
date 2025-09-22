@@ -4,7 +4,16 @@ const THEME_KEY = "devmatch.theme";
 const ThemeContext = createContext(null);
 
 export function ThemeProvider({ children }) {
-  const themes = ["peach", "ocean", "forest", "grape", "sunset", "mono"];
+  const themes = [
+  "peach",
+  "ocean",
+  "forest",
+  "solar",
+  "midnight",
+  "dracula",
+  "cyberdark",
+];
+
   const [theme, setThemeState] = useState(() => localStorage.getItem(THEME_KEY) || "peach");
 
   const setTheme = (t) => {

@@ -16,20 +16,12 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const validateEmail = (value) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(value);
-  };
+  const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmailId(value);
-
-    if (!validateEmail(value)) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
+    setEmailError(validateEmail(value) ? "" : "Please enter a valid email address");
   };
 
   const handleLogin = async (e) => {
@@ -47,25 +39,38 @@ const Login = () => {
       dispatch(addUser(res.data));
       navigate("/");
     } catch (err) {
-      setError(err?.response?.data);
+      setError(err?.response?.data || "Something went wrong. Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen grid place-items-center px-4 bg-[radial-gradient(60rem_60rem_at_10%_-10%,hsl(20_95%_60%/.15),transparent)]">
+    <div
+      className="min-h-screen grid place-items-center px-4"
+      style={{
+        background:
+          "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
+      }}
+    >
       <div className="w-full -mt-16 max-w-md">
-        <div className="relative rounded-2xl p-[1px] bg-gradient-to-r from-[hsl(20_95%_60%/.35)] to-[hsl(330_85%_65%/.35)] shadow-2xl">
-          <div className="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-white border border-[hsl(220_13%_91%)] p-6 sm:p-8">
+        {/* Card with even gradient border */}
+        <div
+          className="rounded-2xl shadow-2xl"
+          style={{
+            background:
+              "linear-gradient(#ffffff,#ffffff) padding-box, linear-gradient(90deg,hsl(var(--brand-start)),hsl(var(--brand-end))) border-box",
+            border: "1px solid transparent",
+          }}
+        >
+          <div className="rounded-2xl bg-white p-6 sm:p-8">
             <div className="text-center">
-              <h1 className=" text-2xl sm:text-3xl font-bold tracking-tight text-[hsl(234_12%_12%)]">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[hsl(234_12%_12%)]">
                 Welcome back
               </h1>
-              <p className="mt-1 text-[hsl(232_10%_45%)]">
-                Sign in to continue
-              </p>
+              <p className="mt-1 text-[hsl(232_10%_45%)]">Sign in to continue</p>
             </div>
 
-            <form className="mt-6 space-y-4" onSubmit={handleLogin}>
+            <form className="mt-6 space-y-4" onSubmit={handleLogin} noValidate>
+              {/* Email */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">
                   Email
@@ -77,17 +82,21 @@ const Login = () => {
                     value={emailId}
                     onChange={handleEmailChange}
                     placeholder="you@example.com"
-                    className={`w-full h-11 rounded-md text-black border px-10 outline-none transition
-                      ${emailError ? "border-red-500" : "border-gray-300"}
+                    aria-invalid={!!emailError}
+                    className={`w-full h-11 rounded-md px-10 outline-none transition
+                      bg-white text-black placeholder:text-gray-400
+                      border ${emailError ? "border-red-500" : "border-gray-300"}
+                      focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]
                     `}
                   />
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
                 {emailError && (
                   <p className="text-red-500 text-xs mt-1">{emailError}</p>
                 )}
               </div>
 
+              {/* Password */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">
                   Password
@@ -99,29 +108,33 @@ const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full h-11 text-black rounded-md border px-10 pr-10 outline-none transition"
+                    className="w-full h-11 rounded-md px-10 pr-10 outline-none transition
+                               bg-white text-black placeholder:text-gray-400
+                               border border-gray-300 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                   />
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(232_10%_45%)]"
+                    onClick={() => setShowPassword((s) => !s)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
               </div>
 
-              <div className="text-red-500 text-sm">{error}</div>
+              {/* Server error */}
+              {!!error && <div className="text-red-500 text-sm">{error}</div>}
 
+              {/* Submit */}
               <button
                 type="submit"
                 disabled={!!emailError}
-                className="mt-2 cursor-pointer inline-flex w-full items-center justify-center gap-2 rounded-md h-11 text-white font-medium bg-gradient-to-r from-[hsl(20_95%_60%)] to-[hsl(330_85%_65%)] hover:opacity-95 disabled:opacity-60"
+                className="mt-2 inline-flex w-full items-center justify-center gap-2
+                           rounded-md h-11 text-white font-medium
+                           bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
+                           hover:opacity-95 disabled:opacity-60"
               >
                 <LogIn className="h-4 w-4" />
                 Login
@@ -132,7 +145,7 @@ const Login = () => {
               New here?{" "}
               <Link
                 to="/signup"
-                className="font-medium text-[hsl(330_85%_45%)] hover:underline"
+                className="font-medium text-[hsl(var(--brand-end))] hover:opacity-90"
               >
                 Create an account
               </Link>

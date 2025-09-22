@@ -1,5 +1,5 @@
 import Navbar from "./components/Navbar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { BASE_URL } from "./lib/constants";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
@@ -11,6 +11,7 @@ import ThemeSwitcher from "./components/ThemeSwitcher";
 function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();  
   const user = useSelector((store) => store.user);
 
   const fetchUser = async () => {
@@ -32,12 +33,15 @@ function App() {
     }
   }, []);
 
+  const isChatPage = location.pathname.startsWith("/chat");
+  const isFeedPage = location.pathname.startsWith("/feed");
+
   return (
     <div>
-      <Navbar />
+      {!isChatPage && !isFeedPage && <Navbar />}
       <Outlet />
       <ThemeSwitcher />
-      <Footer />
+      {!isChatPage && !isFeedPage && <Footer />}
     </div>
   );
 }

@@ -10,7 +10,6 @@ import { Provider } from "react-redux";
 import appStore from "./utils/appStore.js";
 import Feed from "./pages/Feed.jsx";
 import Connections from "./pages/Connections.jsx";
-import Requests from "./pages/Requests.jsx";
 import Signup from "./pages/Signup.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import TermsConditions from "./pages/Terms&Conditions.jsx";
@@ -52,10 +51,6 @@ const appRouter = createBrowserRouter([
       {
         path: "connections",
         element: <Connections />,
-      },
-      {
-        path: "requests",
-        element: <Requests />,
       },
       {
         path: "privacy-policy",

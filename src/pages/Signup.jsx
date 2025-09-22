@@ -4,7 +4,7 @@ import axios from "axios";
 import { BASE_URL } from "../lib/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -23,8 +23,7 @@ const Signup = () => {
 
     if (!firstName.trim()) e.firstName = "First name is required";
     if (!lastName.trim()) e.lastName = "Last name is required";
-    if (!validateEmail(emailId))
-      e.emailId = "Please enter a valid email address";
+    if (!validateEmail(emailId)) e.emailId = "Please enter a valid email address";
     if (!passwordRegex.test(password))
       e.password =
         "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol";
@@ -53,10 +52,24 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen grid place-items-center px-4 bg-[radial-gradient(60rem_60rem_at_10%_-10%,hsl(20_95%_60%/.15),transparent)]">
+    <div
+      className="min-h-screen grid place-items-center pt-28 pb-10 px-4"
+      style={{
+        background:
+          "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
+      }}
+    >
       <div className="w-full -mt-16 max-w-md">
-        <div className="relative rounded-2xl p-[1px] bg-gradient-to-r from-[hsl(20_95%_60%/.35)] to-[hsl(330_85%_65%/.35)] shadow-2xl">
-          <div className="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-white border border-[hsl(220_13%_91%)] p-6 sm:p-8">
+        {/* Card with gradient border */}
+        <div
+          className="rounded-2xl shadow-2xl"
+          style={{
+            background:
+              "linear-gradient(#ffffff,#ffffff) padding-box, linear-gradient(90deg,hsl(var(--brand-start)),hsl(var(--brand-end))) border-box",
+            border: "1px solid transparent",
+          }}
+        >
+          <div className="rounded-2xl bg-white p-6 sm:p-8">
             <div className="text-center">
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[hsl(234_12%_12%)]">
                 Create your account
@@ -66,7 +79,7 @@ const Signup = () => {
               </p>
             </div>
 
-            <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+            <form className="mt-6 space-y-4" onSubmit={onSubmit} noValidate>
               {/* First name */}
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">
@@ -78,16 +91,15 @@ const Signup = () => {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="John"
-                    className={`w-full h-11 rounded-md text-black border px-10 outline-none transition ${
-                      errors.firstName ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full h-11 rounded-md px-10 outline-none transition
+                      bg-white text-black placeholder:text-gray-400
+                      border ${errors.firstName ? "border-red-500" : "border-gray-300"}
+                      focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
                   />
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
                 {errors.firstName && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {errors.firstName}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
                 )}
               </div>
 
@@ -102,11 +114,12 @@ const Signup = () => {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Harley"
-                    className={`w-full h-11 rounded-md text-black border px-10 outline-none transition ${
-                      errors.lastName ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full h-11 rounded-md px-10 outline-none transition
+                      bg-white text-black placeholder:text-gray-400
+                      border ${errors.lastName ? "border-red-500" : "border-gray-300"}
+                      focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
                   />
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
                 {errors.lastName && (
                   <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
@@ -124,11 +137,12 @@ const Signup = () => {
                     value={emailId}
                     onChange={(e) => setEmailId(e.target.value)}
                     placeholder="you@example.com"
-                    className={`w-full h-11 rounded-md text-black border px-10 outline-none transition ${
-                      errors.emailId ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full h-11 rounded-md px-10 outline-none transition
+                      bg-white text-black placeholder:text-gray-400
+                      border ${errors.emailId ? "border-red-500" : "border-gray-300"}
+                      focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
                   />
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
                 {errors.emailId && (
                   <p className="text-red-500 text-xs mt-1">{errors.emailId}</p>
@@ -146,35 +160,35 @@ const Signup = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className={`w-full h-11 rounded-md text-black border px-10 pr-10 outline-none transition ${
-                      errors.password ? "border-red-500" : "border-gray-300"
-                    }`}
+                    className={`w-full h-11 rounded-md px-10 pr-10 outline-none transition
+                      bg-white text-black placeholder:text-gray-400
+                      border ${errors.password ? "border-red-500" : "border-gray-300"}
+                      focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
                   />
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <button
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(232_10%_45%)]"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                   >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
                 {errors.password && (
                   <p className="text-red-500 text-xs mt-1">{errors.password}</p>
                 )}
-                <p className="text-[11px] text-[hsl(232_10%_55%)] mt-1">
-                  Use 8+ characters. Consider mixing letters, numbers, symbols.
+                <p className="text-[11px] text-gray-500 mt-1">
+                  Use 8+ characters. Mix letters, numbers & symbols.
                 </p>
               </div>
 
               {/* Submit */}
               <button
                 type="submit"
-                className="mt-2 cursor-pointer inline-flex w-full items-center justify-center gap-2 rounded-md h-11 text-white font-medium bg-gradient-to-r from-[hsl(20_95%_60%)] to-[hsl(330_85%_65%)] hover:opacity-95"
+                className="mt-2 inline-flex w-full items-center justify-center gap-2
+                  rounded-md h-11 text-white font-medium
+                  bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
+                  hover:opacity-95"
               >
                 <UserPlus className="h-4 w-4" />
                 Create account
@@ -183,12 +197,12 @@ const Signup = () => {
 
             <p className="mt-6 text-center text-sm text-[hsl(232_10%_45%)]">
               Already have an account?{" "}
-              <a
-                href="/login"
-                className="font-medium text-[hsl(330_85%_45%)] hover:underline"
+              <Link
+                to="/login"
+                className="font-medium text-[hsl(var(--brand-end))] hover:opacity-90"
               >
                 Log in
-              </a>
+              </Link>
             </p>
           </div>
         </div>
