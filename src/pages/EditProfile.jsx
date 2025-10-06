@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   User,
   Users,
@@ -45,9 +45,8 @@ const isHttpUrl = (val) => {
 
 const onlyDigits = (s) => s.replace(/\D/g, "");
 
-function SkillsInput({ value = [], onChange, label = "Skills" }) {
+function SkillsInput({ value = [], onChange }) {
   const [input, setInput] = useState("");
-  const inputRef = useRef(null);
 
   const addSkill = (raw) => {
     const s = raw.trim();
@@ -64,7 +63,7 @@ function SkillsInput({ value = [], onChange, label = "Skills" }) {
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Enter" || e.key === "," || e.key === "Tab") {
+    if (["Enter", ",", "Tab"].includes(e.key)) {
       e.preventDefault();
       addSkill(input);
     } else if (e.key === "Backspace" && !input && value.length) {
@@ -74,34 +73,37 @@ function SkillsInput({ value = [], onChange, label = "Skills" }) {
 
   return (
     <div className="sm:col-span-2">
-      <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">
-        {label}
-      </label>
-      <div className="rounded-md border border-gray-300 p-2 flex flex-wrap gap-2 focus-within:ring-2 focus-within:ring-[hsl(20_95%_60%/.35)]">
+      <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Skills</label>
+      <div
+        className="rounded-md border p-2 flex flex-wrap gap-2"
+        style={{ borderColor: "hsl(220 13% 91%)" }}
+      >
         {value.map((tag, i) => (
           <span
-            key={`${tag}-${i}`}
-            className="inline-flex items-center gap-1 rounded-md bg-[hsl(20_95%_60%/0.12)] text-[hsl(234_12%_12%)] px-2 py-1 text-xs border border-[hsl(20_95%_60%/0.3)]"
+            key={i}
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs border"
+            style={{
+              background: "hsl(var(--brand-start)/.1)",
+              borderColor: "hsl(var(--brand-start)/.3)",
+              color: "hsl(234 12% 12%)",
+            }}
           >
             {tag}
             <button
               type="button"
               onClick={() => removeSkill(i)}
               className="opacity-70 hover:opacity-100"
-              aria-label={`Remove ${tag}`}
-              title="Remove"
             >
               <X className="h-3 w-3" />
             </button>
           </span>
         ))}
         <input
-          ref={inputRef}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={value.length ? "Add more (Enter)" : "e.g., React, Node.js"}
-          className="flex-1 min-w-[10rem] px-2 py-1 outline-none text-sm"
+          className="flex-1 min-w-[10rem] px-2 py-1 outline-none text-sm bg-transparent"
         />
         <button
           type="button"
@@ -125,7 +127,7 @@ const EXPERIENCE_OPTIONS = ["Fresher", "Beginner", "Intermediate", "Advanced"];
 const EditProfile = ({ user }) => {
   const [firstName, setFirstName] = useState(user?.firstName ?? "");
   const [lastName, setLastName] = useState(user?.lastName ?? "");
-  const [gender, setGender] = useState(user?.gender ?? ""); // no default "Male"
+  const [gender, setGender] = useState(user?.gender ?? "");
   const [age, setAge] = useState(user?.age ?? 18);
   const [mobile, setMobile] = useState(user?.mobile ? String(user.mobile) : "");
   const [tagline, setTagline] = useState(user?.description ?? "Hey there! I am using DevMatch.");
@@ -136,13 +138,14 @@ const EditProfile = ({ user }) => {
   const [linkedin, setLinkedin] = useState(user?.linkedin ?? "");
   const [githubURL, setGithubURL] = useState(user?.github ?? "");
   const [website, setWebsite] = useState(user?.website ?? "");
+  const [submitted, setSubmitted] = useState(false);
 
-  const [submitted, setSubmitted] = useState(false); // to gate skills error only on save
   const dispatch = useDispatch();
 
   const errors = useMemo(() => {
     const e = {};
-    if (!firstName?.trim() || firstName.trim().length < 3) e.firstName = "First name must be at least 3 characters.";
+    if (!firstName?.trim() || firstName.trim().length < 3)
+      e.firstName = "First name must be at least 3 characters.";
     if (age == null || age === "" || Number(age) < 15) e.age = "Age must be 15 or above.";
     if (!gender) e.gender = "Select a valid gender.";
     if (!tagline?.trim()) e.tagline = "Tagline is required.";
@@ -155,19 +158,17 @@ const EditProfile = ({ user }) => {
     if (website && !isHttpUrl(website)) e.website = "Invalid website URL.";
     if (mobile) {
       const digits = onlyDigits(mobile);
-      if (digits.length < 7 || digits.length > 15) e.mobile = "Enter a valid phone number (7–15 digits).";
+      if (digits.length < 7 || digits.length > 15)
+        e.mobile = "Enter a valid phone number (7–15 digits).";
     }
-    // NOTE: skills validation handled on save (to only show then)
     return e;
   }, [firstName, age, gender, tagline, role, experience, photoURL, linkedin, githubURL, website, mobile]);
 
   const handleSave = async () => {
-    setSubmitted(true); // show skills error if needed
-
+    setSubmitted(true);
     const skillsInvalid = !Array.isArray(skills) || skills.length < 2;
     if (Object.keys(errors).length || skillsInvalid) {
       toast.error("Please fix the highlighted fields.", {
-        autoClose: 2000,
         position: "bottom-right",
         transition: Bounce,
       });
@@ -190,147 +191,121 @@ const EditProfile = ({ user }) => {
         github: githubURL ? normalizeUrl(githubURL) : "",
         website: website ? normalizeUrl(website) : "",
       };
-      Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
       const res = await axios.patch(`${BASE_URL}/profile/edit`, payload, { withCredentials: true });
       dispatch(addUser(res?.data?.user));
       toast.success("Profile updated successfully", {
-        autoClose: 2000,
         position: "bottom-right",
-        closeOnClick: true,
-        pauseOnHover: true,
-        hideProgressBar: false,
-        progressStyle: { height: "3px", background: "linear-gradient(90deg, hsl(20 95% 60%), hsl(330 85% 65%))" },
-        style: { border: "1px solid hsl(220 13% 91%)", boxShadow: "0 10px 30px rgba(0,0,0,0.08)" },
         transition: Bounce,
-        theme: "light",
       });
-    } catch (err) {
+    } catch {
       toast.error("Failed to update profile", {
-        autoClose: 2200,
         position: "bottom-right",
-        hideProgressBar: false,
-        progressStyle: { height: "3px", background: "hsl(0 85% 60%)" },
         transition: Bounce,
-        theme: "light",
       });
-      console.error(err);
     }
   };
 
-  const handleCancel = () => {
-    setFirstName(user?.firstName ?? "");
-    setLastName(user?.lastName ?? "");
-    setGender(user?.gender ?? "");
-    setAge(user?.age ?? 18);
-    setMobile(user?.mobile ? String(user.mobile) : "");
-    setTagline(user?.description ?? "Hey there! I am using DevMatch.");
-    setPhotoURL(user?.photoURL ?? "");
-    setSkills(Array.isArray(user?.skills) ? user.skills : []);
-    setRole(user?.role ?? "Student");
-    setExperience(user?.experience ?? "Fresher");
-    setLinkedin(user?.linkedin ?? "");
-    setGithubURL(user?.github ?? "");
-    setWebsite(user?.website ?? "");
-    setSubmitted(false);
-  };
+  const handleCancel = () => window.location.reload();
 
   return (
-    <div className="min-h-screen w-full px-4 bg-[radial-gradient(60rem_60rem_at_10%_-10%,hsl(20_95%_60%/.15),transparent)]">
-      <div className="mx-auto max-w-7xl py-8 flex items-start justify-center gap-8 lg:gap-12">
+    <div
+      className="min-h-screen w-full px-4"
+      style={{
+        background:
+          "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
+      }}
+    >
+      <div className="mx-auto max-w-7xl py-10 flex items-start justify-center gap-8 lg:gap-12">
         <div className="w-full max-w-3xl">
+          {/* Title outside card */}
           <div className="text-center mb-6">
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[hsl(234_12%_12%)]">Edit profile</h1>
-            <p className="mt-1 text-[hsl(232_10%_45%)]">Update your basic details.</p>
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]">
+              Edit Profile
+            </h1>
+            <p className="mt-1 text-[hsl(232_10%_45%)]">Update your basic details</p>
           </div>
 
-          <div className="relative rounded-2xl p-[1px] bg-gradient-to-r from-[hsl(20_95%_60%/.35)] to-[hsl(330_85%_65%/.35)] shadow-2xl">
-            <div className="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-white border border-[hsl(220_13%_91%)] p-6 sm:p-8">
+          {/* Gradient Card */}
+          <div
+            className="rounded-2xl mb-20 shadow-2xl"
+            style={{
+              background:
+                "linear-gradient(#ffffff,#ffffff) padding-box, linear-gradient(90deg,hsl(var(--brand-start)),hsl(var(--brand-end))) border-box",
+              border: "1px solid transparent",
+            }}
+          >
+            <div className="rounded-2xl bg-white p-6 sm:p-8">
+              {/* Form */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* First Name */}
+                {/* First name */}
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">First name</label>
                   <div className="relative">
                     <input
-                      type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       placeholder="First name"
-                      className={`w-full h-11 rounded-md text-black border px-10 outline-none ${
+                      className={`w-full h-11 rounded-md px-10 border ${
                         errors.firstName ? "border-red-400" : "border-gray-300"
-                      }`}
+                      } focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
                     />
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  {errors.firstName && <p className="mt-1 text-xs text-red-500">{errors.firstName}</p>}
+                  {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
                 </div>
 
-                {/* Last Name */}
+                {/* Last name */}
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Last name</label>
                   <div className="relative">
                     <input
-                      type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       placeholder="Last name"
-                      className="w-full h-11 rounded-md text-black border border-gray-300 px-10 outline-none"
+                      className="w-full h-11 rounded-md px-10 border border-gray-300 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     />
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
                 </div>
 
-                {/* Tagline (100 chars) */}
+                {/* Tagline */}
                 <div className="sm:col-span-2">
                   <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Tagline</label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      value={tagline}
-                      onChange={(e) => setTagline(e.target.value.slice(0, 100))}
-                      placeholder="Tell the community about yourself…"
-                      className={`w-full h-11 rounded-md text-black border px-3 outline-none placeholder:text-[hsl(232_10%_65%)] ${
-                        errors.tagline ? "border-red-400" : "border-gray-300"
-                      }`}
-                    />
+                  <input
+                    value={tagline}
+                    onChange={(e) => setTagline(e.target.value.slice(0, 100))}
+                    className={`w-full h-11 rounded-md px-3 border ${
+                      errors.tagline ? "border-red-400" : "border-gray-300"
+                    } focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
+                  />
+                  <div className="flex justify-between text-xs mt-1 text-[hsl(232_10%_45%)]">
+                    <span>Max 100 chars</span>
+                    <span>{tagline.length}/100</span>
                   </div>
-                  <div className="mt-1 flex justify-between text-xs">
-                    <span className="text-[hsl(232_10%_45%)]">Max 100 characters</span>
-                    <span className={`${tagline.length > 100 ? "text-red-500" : "text-[hsl(232_10%_45%)]"}`}>
-                      {tagline.length}/100 chars
-                    </span>
-                  </div>
-                  {errors.tagline && <p className="mt-1 text-xs text-red-500">{errors.tagline}</p>}
                 </div>
 
-                {/* Gender, Age (narrow), Mobile (wide) */}
+                {/* Gender / Age / Mobile */}
                 <div className="grid grid-cols-[1fr_auto_2fr] gap-4 sm:col-span-2">
-                  {/* Gender select with custom chevron & placeholder */}
+                  {/* Gender */}
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Gender</label>
                     <div className="relative">
                       <select
                         value={gender}
                         onChange={(e) => setGender(e.target.value)}
-                        className={`w-full h-11 rounded-md text-black border pl-10 pr-10 outline-none bg-white appearance-none ${
-                          errors.gender ? "border-red-400" : "border-gray-300"
-                        }`}
+                        className="w-full h-11 rounded-md border border-gray-300 pl-10 pr-10 outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                       >
-                        <option value="" disabled>
-                          Choose gender
-                        </option>
-                        {GENDER_OPTIONS.map((opt) => (
-                          <option key={opt} value={opt}>
-                            {opt}
-                          </option>
+                        <option value="" disabled>Choose gender</option>
+                        {GENDER_OPTIONS.map((g) => (
+                          <option key={g}>{g}</option>
                         ))}
                       </select>
-                      <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
-                      <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                      <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     </div>
-                    {errors.gender && <p className="mt-1 text-xs text-red-500">{errors.gender}</p>}
                   </div>
 
-                  {/* Age (compact) */}
+                  {/* Age */}
                   <div>
                     <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Age</label>
                     <div className="relative">
@@ -338,32 +313,24 @@ const EditProfile = ({ user }) => {
                         type="number"
                         value={age}
                         onChange={(e) => setAge(e.target.value)}
-                        placeholder="Age"
-                        className={`w-24 h-11 rounded-md text-black border pl-10 pr-3 outline-none ${
-                          errors.age ? "border-red-400" : "border-gray-300"
-                        }`}
+                        className="w-24 h-11 rounded-md border border-gray-300 pl-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                       />
-                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                      <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     </div>
-                    {errors.age && <p className="mt-1 text-xs text-red-500">{errors.age}</p>}
                   </div>
 
-                  {/* Mobile (wider) */}
+                  {/* Mobile */}
                   <div>
-                    <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Mobile (optional)</label>
+                    <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Mobile</label>
                     <div className="relative">
                       <input
-                        inputMode="tel"
                         value={mobile}
                         onChange={(e) => setMobile(e.target.value)}
-                        placeholder="e.g., 9876543210"
-                        className={`w-full h-11 rounded-md text-black border pl-10 pr-3 outline-none ${
-                          errors.mobile ? "border-red-400" : "border-gray-300"
-                        }`}
+                        placeholder="9876543210"
+                        className="w-full h-11 rounded-md border border-gray-300 pl-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                       />
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                     </div>
-                    {errors.mobile && <p className="mt-1 text-xs text-red-500">{errors.mobile}</p>}
                   </div>
                 </div>
 
@@ -372,17 +339,13 @@ const EditProfile = ({ user }) => {
                   <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Photo URL</label>
                   <div className="relative">
                     <input
-                      type="text"
                       value={photoURL}
                       onChange={(e) => setPhotoURL(e.target.value)}
                       placeholder="https://example.com/avatar.jpg"
-                      className={`w-full h-11 rounded-md text-black border px-10 outline-none ${
-                        errors.photoURL ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     />
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  {errors.photoURL && <p className="mt-1 text-xs text-red-500">{errors.photoURL}</p>}
                 </div>
 
                 {/* Skills */}
@@ -396,110 +359,86 @@ const EditProfile = ({ user }) => {
                   <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Role</label>
                   <div className="relative">
                     <input
-                      type="text"
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
-                      placeholder="e.g., Student, Full-Stack Developer"
-                      className={`w-full h-11 rounded-md text-black border px-10 outline-none ${
-                        errors.role ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     />
-                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  {errors.role && <p className="mt-1 text-xs text-red-500">{errors.role}</p>}
                 </div>
 
-                {/* Experience select fixed arrow */}
+                {/* Experience */}
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Experience</label>
                   <div className="relative">
                     <select
                       value={experience}
                       onChange={(e) => setExperience(e.target.value)}
-                      className={`w-full h-11 rounded-md text-black border pl-10 pr-10 outline-none bg-white appearance-none ${
-                        errors.experience ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className="w-full h-11 rounded-md border border-gray-300 pl-10 pr-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     >
                       {EXPERIENCE_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
+                        <option key={opt}>{opt}</option>
                       ))}
                     </select>
-                    <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
-                    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  {errors.experience && <p className="mt-1 text-xs text-red-500">{errors.experience}</p>}
                 </div>
 
                 {/* LinkedIn */}
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">LinkedIn (optional)</label>
+                  <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">LinkedIn</label>
                   <div className="relative">
                     <input
-                      type="text"
                       value={linkedin}
                       onChange={(e) => setLinkedin(e.target.value)}
                       placeholder="https://www.linkedin.com/in/username"
-                      className={`w-full h-11 rounded-md text-black border px-10 outline-none ${
-                        errors.linkedin ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     />
-                    <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  {errors.linkedin && <p className="mt-1 text-xs text-red-500">{errors.linkedin}</p>}
                 </div>
 
                 {/* GitHub */}
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">GitHub (optional)</label>
+                  <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">GitHub</label>
                   <div className="relative">
                     <input
-                      type="text"
                       value={githubURL}
                       onChange={(e) => setGithubURL(e.target.value)}
                       placeholder="https://github.com/username"
-                      className={`w-full h-11 rounded-md text-black border px-10 outline-none ${
-                        errors.github ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     />
-                    <Github className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <Github className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  {errors.github && <p className="mt-1 text-xs text-red-500">{errors.github}</p>}
                 </div>
 
                 {/* Website */}
                 <div className="sm:col-span-2">
-                  <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Personal Website (optional)</label>
+                  <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">Personal Website</label>
                   <div className="relative">
                     <input
-                      type="text"
                       value={website}
                       onChange={(e) => setWebsite(e.target.value)}
                       placeholder="https://yourdomain.com"
-                      className={`w-full h-11 rounded-md text-black border px-10 outline-none ${
-                        errors.website ? "border-red-400" : "border-gray-300"
-                      }`}
+                      className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     />
-                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
-                  {errors.website && <p className="mt-1 text-xs text-red-500">{errors.website}</p>}
                 </div>
               </div>
 
+              {/* Buttons */}
               <div className="mt-6 flex flex-col sm:flex-row gap-3">
                 <button
-                  type="button"
                   onClick={handleSave}
-                  className="inline-flex cursor-pointer items-center justify-center rounded-md h-11 px-4 text-white font-medium bg-gradient-to-r from-[hsl(20_95%_60%)] to-[hsl(330_85%_65%)] hover:opacity-95"
+                  className="inline-flex items-center justify-center rounded-md h-11 px-4 text-white font-medium bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-95"
                 >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save changes
+                  <Save className="h-4 w-4 mr-2" /> Save changes
                 </button>
                 <button
-                  type="button"
                   onClick={handleCancel}
-                  className="inline-flex cursor-pointer items-center justify-center rounded-md h-11 px-4 border border-[hsl(220_13%_91%)] bg-white hover:bg-[hsl(220_13%_96%)] text-[hsl(234_12%_12%)]"
+                  className="inline-flex items-center justify-center rounded-md h-11 px-4 border border-gray-300 bg-white hover:bg-gray-50 text-[hsl(234_12%_12%)]"
                 >
                   Cancel
                 </button>
@@ -508,8 +447,8 @@ const EditProfile = ({ user }) => {
           </div>
         </div>
 
-        {/* Preview card stays sticky on the right (unchanged) */}
-        <div className="hidden lg:block w-[360px] shrink-0 sticky top-8">
+        {/* Right Preview */}
+        <div className="hidden lg:block w-[360px] mt-24 mb-20 shrink-0 sticky top-8">
           <UserCard
             user={{
               firstName,
@@ -522,46 +461,15 @@ const EditProfile = ({ user }) => {
               skills,
               role,
               experience,
-              linkedin: linkedin ? normalizeUrl(linkedin) : "",
-              github: githubURL ? normalizeUrl(githubURL) : "",
-              website: website ? normalizeUrl(website) : "",
+              linkedin,
+              github: githubURL,
+              website,
             }}
           />
         </div>
       </div>
 
-      {/* Mobile preview */}
-      <div className="lg:hidden mt-8 flex justify-center">
-        <UserCard
-          user={{
-            firstName,
-            lastName,
-            age: Number(age),
-            gender,
-            description: tagline,
-            photoURL,
-            mobile: mobile ? Number(onlyDigits(mobile)) : undefined,
-            skills,
-            role,
-            experience,
-            linkedin: linkedin ? normalizeUrl(linkedin) : "",
-            github: githubURL ? normalizeUrl(githubURL) : "",
-            website: website ? normalizeUrl(website) : "",
-          }}
-        />
-      </div>
-
-      <ToastContainer
-        position="bottom-right"
-        autoClose={2000}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnHover
-        draggable={false}
-        hideProgressBar={false}
-        transition={Bounce}
-        theme="dark"
-      />
+      <ToastContainer position="bottom-right" transition={Bounce} />
     </div>
   );
 };

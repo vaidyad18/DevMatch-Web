@@ -5,15 +5,20 @@ import { Link } from "react-router-dom";
 const RefundPolicy = () => {
   return (
     <div className="relative">
-      <section id="refund-policy" className="relative isolate overflow-hidden bg-white">
-        {/* Subtle gradient to match the site theme */}
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(35rem_35rem_at_20%_0%,hsl(20_95%_60%/.15),transparent)]" />
-
+      <section
+        id="refund-policy"
+        className="relative isolate overflow-hidden"
+        style={{
+          background:
+            "radial-gradient(35rem 35rem at 20% 0%, hsl(var(--brand-start)/.15), transparent)",
+        }}
+      >
         <div className="mx-auto max-w-4xl px-6 lg:px-10 pt-16 md:pt-24 pb-16 md:pb-24 relative">
+
           {/* Back Button */}
           <Link
             to="/"
-            className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm font-medium text-[hsl(234_12%_12%)] hover:text-[hsl(20_95%_60%)] transition-colors"
+            className="absolute top-6 left-6 inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-[hsl(var(--brand-end))] transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
             Back
@@ -21,14 +26,15 @@ const RefundPolicy = () => {
 
           {/* Heading */}
           <div className="text-center">
-            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-[hsl(234_12%_12%)]">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-transparent bg-clip-text">
               Cancellation & Refund Policy
             </h1>
-            <p className="mt-3 text-[hsl(232_10%_45%)]">Last updated: September 09, 2025</p>
+            <p className="mt-3 text-muted-foreground">Last updated: September 09, 2025</p>
           </div>
 
           {/* Content */}
-          <div className="mt-10 space-y-8 text-[hsl(232_10%_45%)] leading-relaxed text-sm md:text-base">
+          <div className="mt-10 space-y-8 text-muted-foreground leading-relaxed text-sm md:text-base">
+
             <section>
               <p>
                 DevMatch is a social platform for developers to discover and connect. We do not sell
@@ -37,7 +43,7 @@ const RefundPolicy = () => {
             </section>
 
             <section>
-              <h2 className="font-semibold text-[hsl(234_12%_12%)]">Account Cancellation</h2>
+              <h2 className="font-semibold text-foreground">Account Cancellation</h2>
               <p className="mt-2">
                 You can cancel your DevMatch account at any time by visiting your account settings
                 and choosing to delete your account. Deleting your account will log you out and
@@ -47,7 +53,7 @@ const RefundPolicy = () => {
             </section>
 
             <section>
-              <h2 className="font-semibold text-[hsl(234_12%_12%)]">Refunds</h2>
+              <h2 className="font-semibold text-foreground">Refunds</h2>
               <p className="mt-2">
                 <span className="font-medium">Refunds are not applicable.</span> DevMatch currently
                 does not charge users and does not process payments. If paid features are introduced
@@ -56,7 +62,7 @@ const RefundPolicy = () => {
             </section>
 
             <section>
-              <h2 className="font-semibold text-[hsl(234_12%_12%)]">Data Deletion</h2>
+              <h2 className="font-semibold text-foreground">Data Deletion</h2>
               <p className="mt-2">
                 If you delete your account, we will remove or anonymize your personal data in line
                 with our Privacy Policy and applicable laws. Certain minimal records may be retained
@@ -65,18 +71,14 @@ const RefundPolicy = () => {
             </section>
 
             <section>
-              <h2 className="font-semibold text-[hsl(234_12%_12%)]">Questions</h2>
+              <h2 className="font-semibold text-foreground">Questions</h2>
               <p className="mt-2">
                 Need help with account cancellation or data deletion? Contact us at{" "}
                 <a
                   href="mailto:vaidyadandriyal04@gmail.com"
-                  className="underline decoration-[hsl(20_95%_60%)] underline-offset-2"
+                  className="underline decoration-[hsl(var(--brand-start))] underline-offset-2"
                 >
                   vaidyadandriyal04@gmail.com
-                </a>{" "}
-                or{" "}
-                <a href="tel:+917703908277" className="underline decoration-[hsl(20_95%_60%)] underline-offset-2">
-                  7703908277
                 </a>
                 .
               </p>

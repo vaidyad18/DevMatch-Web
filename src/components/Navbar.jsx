@@ -4,15 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../lib/constants";
 import { removeUser } from "../utils/userSlice";
 import { useState } from "react";
-import { Menu, X, LogOut, UserRound, Users as UsersIcon, Key } from "lucide-react";
+import { Menu, X, LogOut, UserRound, Users as UsersIcon, Key, CardSim } from "lucide-react";
+import LOGO from "../assets/logo.png";
 
-const navItems = [
-  { to: "/#home", label: "Home" },
-  { to: "/feed", label: "Start Swiping" },
-  { to: "/meet-dev", label: "Meet Developer" },
 
-  { to: "/memberships", label: "Join Premium" },
-];
 
 const Navbar = () => {
   const user = useSelector((store) => store.user);
@@ -34,35 +29,20 @@ const Navbar = () => {
     <nav className="sticky top-0 z-40 backdrop-blur bg-card/80 shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between">
-          {/* Brand */}
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative rounded-xl p-[1px] bg-gradient-to-r from-[hsl(var(--brand-start)/.45)] to-[hsl(var(--brand-end)/.45)]">
-              <div className="rounded-[calc(theme(borderRadius.xl)-1px)] bg-card">
+            <div className="relative rounded-xl p-[1px]">
+              <div className=" bg-card">
                 <img
-                  className="w-12 h-12 object-cover"
-                  src="https://dndesigns.co.in/wp-content/uploads/2024/09/5.png"
+                  className="w-9 h-9 object-cover"
+                  src={LOGO}
                   alt="DevMatch logo"
                 />
               </div>
             </div>
-            <span className="text-xl font-bold tracking-tight text-foreground">
+            <span className="text-xl  font-bold tracking-tight text-foreground">
               DevMatch
             </span>
           </Link>
-
-          {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-7">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                to={item.to}
-                className="group relative text-sm font-medium text-muted-foreground hover:text-foreground transition"
-              >
-                {item.label}
-                <span className="pointer-events-none absolute left-0 -bottom-1 h-[2px] w-0 rounded-full bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] transition-all duration-300 group-hover:w-full" />
-              </Link>
-            ))}
-          </div>
 
           {/* Right actions */}
           <div className="hidden lg:flex items-center gap-4">
@@ -81,7 +61,22 @@ const Navbar = () => {
               </>
             ) : (
               <div className="flex items-center gap-5">
-                {/* Chat button (desktop) */}
+
+                <span className="hidden xl:inline text-sm text-muted-foreground">
+                  Welcome,{" "}
+                  <span className="font-semibold text-foreground">
+                    {user.firstName}
+                  </span>
+                </span>
+
+                <Link
+                  to="/feed"
+                  className="hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border text-sm font-medium text-muted-foreground hover:bg-[hsl(var(--secondary))] transition"
+                >
+                  <CardSim/>
+                  Feed
+                </Link>
+
                 <Link
                   to="/chat"
                   className="hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border text-sm font-medium text-muted-foreground hover:bg-[hsl(var(--secondary))] transition"
@@ -101,14 +96,6 @@ const Navbar = () => {
                   Chat
                 </Link>
 
-                <span className="hidden xl:inline text-sm text-muted-foreground">
-                  Welcome,{" "}
-                  <span className="font-semibold text-foreground">
-                    {user.firstName}
-                  </span>
-                </span>
-
-                {/* Avatar dropdown */}
                 <div className="dropdown dropdown-end">
                   <div
                     tabIndex={0}
@@ -132,14 +119,14 @@ const Navbar = () => {
                   </div>
                   <ul
                     tabIndex={0}
-                    className="menu menu-md dropdown-content bg-card text-muted-foreground rounded-xl z-10 mt-3 w-56 p-2 border border-border shadow-xl"
+                    className="menu menu-md dropdown-content bg-white text-muted-foreground rounded-xl z-10 mt-3 w-56 p-2 border border-border shadow-xl"
                   >
-                    <li className="px-2 pt-2 pb-1 text-xs">
+                    <div className="px-2 pt-2 pb-1 text-xs">
                       Signed in as{" "}
-                      <span className="font-medium text-foreground">
+                      <span className="font-semibold mt-1 text-[13px] text-foreground">
                         {user.firstName}
                       </span>
-                    </li>
+                    </div>
                     <li>
                       <Link to="/profile" className="flex items-center gap-2">
                         <UserRound className="h-4 w-4" />{" "}
@@ -197,18 +184,6 @@ const Navbar = () => {
       {open && (
         <div className="lg:hidden bg-card/95 backdrop-blur">
           <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col gap-4">
-            <nav className="flex flex-col gap-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  onClick={() => setOpen(false)}
-                  className="text-foreground/90 hover:text-foreground font-medium"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
             {!user && (
               <div className="flex items-center gap-3 pt-2">
                 <Link to="/signup" onClick={() => setOpen(false)}>

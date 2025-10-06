@@ -11,6 +11,8 @@ import {
 import ParallaxBg from "../components/ParallexBg";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import UserCard from "../components/UserCard";
+import { motion } from "framer-motion";
 
 export default function Home() {
   const user = useSelector((store) => store.user);
@@ -59,13 +61,19 @@ export default function Home() {
 
         <div className="mx-auto max-w-7xl px-6 lg:px-10 pt-20 md:pt-28 pb-16 md:pb-24">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div>
+            {/* === LEFT CONTENT === */}
+            <motion.div
+              initial={{ opacity: 0, x: -60 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+            >
               {/* Badge */}
-              <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs bg-card/90 text-foreground/80 ">
+              <span className="inline-flex items-center gap-2 rounded-full border border-border px-3 py-1 text-xs bg-card/90 text-foreground/80">
                 <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]" />
-                DevMatch - Social for developers
+                DevMatch – Social for Developers
               </span>
 
+              {/* Headline */}
               <h1 className="mt-6 text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight text-foreground">
                 Meet your next{" "}
                 <span className="block bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]">
@@ -130,11 +138,93 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
-            <div className="relative border">
-              
-            </div>
+            <motion.div
+              className="relative flex justify-center items-center h-[480px] -mt-12"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {[
+                {
+                  firstName: "Jane",
+                  lastName: "Doe",
+                  age: 28,
+                  gender: "Female",
+                  role: "Full Stack Developer",
+                  experience: "Intermediate",
+                  description:
+                    "Building scalable web apps with React & Node.js 💻",
+                  skills: [
+                    "React",
+                    "Node.js",
+                    "MongoDB",
+                    "Express",
+                    "Tailwind",
+                  ],
+                  linkedin: "https://linkedin.com/in/janedoe",
+                  github: "https://github.com/janedoe",
+                  website: "https://janedoe.dev",
+                  photoURL: "https://randomuser.me/api/portraits/women/44.jpg",
+                },
+                {
+                  firstName: "Aarav",
+                  lastName: "Patel",
+                  age: 24,
+                  gender: "Male",
+                  role: "Frontend Developer",
+                  experience: "Intermediate",
+                  description:
+                    "Crafting smooth UI experiences with React, Next.js & Tailwind 🌈",
+                  skills: ["React", "Next.js", "Framer Motion", "TypeScript"],
+                  linkedin: "https://linkedin.com/in/aaravpatel",
+                  github: "https://github.com/aaravcodes",
+                  website: "https://aarav.dev",
+                  photoURL: "https://randomuser.me/api/portraits/men/76.jpg",
+                },
+                {
+                  firstName: "Kabir",
+                  lastName: "Singh",
+                  age: 27,
+                  gender: "Male",
+                  role: "AI Engineer",
+                  experience: "Advanced",
+                  description:
+                    "Experimenting with neural nets, generative AI, and large language models 🤖",
+                  skills: ["PyTorch", "Transformers", "LangChain", "LLMs"],
+                  linkedin: "https://linkedin.com/in/kabirsingh",
+                  github: "https://github.com/kabirai",
+                  website: "https://kabirsingh.ai",
+                  photoURL: "https://randomuser.me/api/portraits/men/32.jpg",
+                },
+              ].map((user, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute"
+                  initial={{ opacity: 0, y: 60, scale: 0.6 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    scale: 0.7,
+                    rotate: i === 0 ? -10 : i === 2 ? 10 : 0,
+                    x: i === 0 ? -150 : i === 2 ? 230 : 50,
+                  }}
+                  transition={{
+                    delay: i * 0.2,
+                    type: "spring",
+                    stiffness: 100,
+                    damping: 15,
+                  }}
+                  whileHover={{
+                    scale: 0.71, // Slight enlargement
+                    transition: { type: "spring", stiffness: 150, damping: 12 },
+                  }}
+                >
+                  <UserCard user={user} />
+                </motion.div>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>

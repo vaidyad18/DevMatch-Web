@@ -11,9 +11,10 @@ import {
   Mars,
   Venus,
   Circle,
+  VenusAndMars,
 } from "lucide-react";
 
-const UserCard = ({ user = {} }) => {
+const UserCard = ({ user }) => {
   const {
     firstName = "",
     lastName = "",
@@ -31,7 +32,7 @@ const UserCard = ({ user = {} }) => {
 
   const name = `${firstName} ${lastName}`.trim() || "Unknown Dev";
   const GenderIcon =
-    gender === "Male" ? Mars : gender === "Female" ? Venus : Circle;
+    gender === "Male" ? Mars : gender === "Female" ? Venus : VenusAndMars;
 
   const safeUrl = (u) => (u && /^https?:\/\//i.test(u) ? u : undefined);
 
@@ -133,7 +134,7 @@ const UserCard = ({ user = {} }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-[#0A66C2] hover:text-white"
+                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-blue-100 hover:text-white"
               >
                 <Linkedin className="h-5 w-5 text-[#0A66C2] group-hover:text-white" />
               </a>
@@ -144,7 +145,7 @@ const UserCard = ({ user = {} }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-black hover:text-white"
+                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-gray-300 hover:text-white"
               >
                 <Github className="h-5 w-5 text-black group-hover:text-white" />
               </a>
@@ -155,7 +156,7 @@ const UserCard = ({ user = {} }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Website"
-                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-green-600 hover:text-white"
+                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-green-100 hover:text-white"
               >
                 <Globe className="h-5 w-5 text-green-600 group-hover:text-white" />
               </a>

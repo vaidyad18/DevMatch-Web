@@ -1,44 +1,49 @@
-import axios from "axios";
-import { BASE_URL } from "../lib/constants";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import axios from "axios";
+import { CheckCircle2, Star, Crown } from "lucide-react";
+import { motion } from "framer-motion";
+import { BASE_URL } from "../lib/constants";
 
-const memberships = [
+const plans = [
   {
-    title: "Silver Membership",
-    price: "₹499/month",
-    desc: "Best for beginners exploring our platform.",
+    name: "Current Plan",
+    tagline: "Your active base membership plan",
+    price: "Free",
+    color: "from-gray-200 via-gray-300 to-gray-400",
+    glow: "shadow-[0_0_25px_rgba(156,163,175,0.35)]",
     features: [
-      "Access to basic features",
+      "Access to DevMatch feed",
+      "Basic collaboration tools",
       "Community support",
-      "Limited project uploads",
+      "3 project uploads/month",
       "Email support",
     ],
-    color: "from-gray-300 to-gray-400",
-    glow: "shadow-[0_0_20px_rgba(156,163,175,0.8)]", // gray glow,
     type: "silver",
   },
   {
-    title: "Gold Membership",
+    name: "Elite Membership",
+    tagline: "For professionals aiming to stand out",
     price: "₹999/month",
-    desc: "Perfect for professionals who want more.",
+    color: "from-[#FFF9E6] via-[#FFE9A3] to-[#FFD75E]", // light gold bg
+    glow: "shadow-[0_0_35px_rgba(255,223,120,0.5)]",
     features: [
-      "Everything in Silver",
+      "Everything in Current Plan",
       "Unlimited project uploads",
-      "Priority customer support",
-      "Exclusive resources & guides",
-      "Early access to new features",
+      "Priority support (24×7)",
+      "Advanced analytics dashboard",
+      "Exclusive developer events",
+      "Early access to beta features",
+      "AI-powered project suggestions",
     ],
-    color: "from-yellow-400 to-yellow-500",
-    glow: "shadow-[0_0_25px_rgba(250,204,21,0.9)]", // yellow glow,
     type: "gold",
+    highlighted: true,
   },
 ];
 
 const Memberships = () => {
   const [isUserPremium, setIsUserPremium] = useState(false);
-
   const user = useSelector((store) => store.user);
   const navigate = useNavigate();
 
@@ -47,20 +52,19 @@ const Memberships = () => {
   }, []);
 
   const verifyUserPremium = async () => {
-    const res = await axios.get(BASE_URL + "/premium/verify", {
-      withCredentials: true,
-    });
-    if (res.data.isPremium) {
-      setIsUserPremium(true);
+    try {
+      const res = await axios.get(BASE_URL + "/premium/verify", {
+        withCredentials: true,
+      });
+      if (res.data.isPremium) setIsUserPremium(true);
+    } catch (err) {
+      console.error(err);
     }
   };
 
   const handleBuy = async (type) => {
     try {
-      if (!user) {
-        navigate("/login");
-        return;
-      }
+      if (!user) return navigate("/login");
 
       const orderRes = await axios.post(
         `${BASE_URL}/payment/create`,
@@ -75,19 +79,14 @@ const Memberships = () => {
         amount,
         currency,
         name: "DevMatch",
-        description: "Meet your next collaborator",
+        description: "Membership Purchase",
         image: "https://dndesigns.co.in/wp-content/uploads/2024/09/5.png",
         order_id: orderId,
-        notes: {
-          firstName: notes?.firstName,
-          lastName: notes?.lastName,
-          email: notes?.emailId,
-        },
         prefill: {
           name: `${notes?.firstName || ""} ${notes?.lastName || ""}`.trim(),
           email: notes?.emailId || "",
         },
-        theme: { color: "#3399cc" },
+        theme: { color: "#6D28D9" },
         handler: async function (response) {
           try {
             const verifyRes = await axios.post(
@@ -100,73 +99,152 @@ const Memberships = () => {
               { withCredentials: true }
             );
 
-            if (verifyRes.data?.success && verifyRes.data?.isPremium) {
+            if (verifyRes.data?.success && verifyRes.data?.isPremium)
               await verifyUserPremium();
-            } else {
-              console.error("Verify failed:", verifyRes.data);
-              alert(verifyRes.data?.error || "Payment verification failed");
-            }
-          } catch (e) {
-            console.error("Verify error:", e);
-            alert("Payment verification failed");
+            else alert("Payment verification failed");
+          } catch (err) {
+            console.error(err);
+            alert("Verification error");
           }
-        },
-        modal: {
-          ondismiss: function () {},
         },
       };
 
       const rzp = new window.Razorpay(options);
-
-      rzp.on("payment.failed", function (resp) {
-        console.error("Payment failed:", resp?.error);
-        alert("Payment failed. Please try again.");
-      });
-
       rzp.open();
     } catch (err) {
       console.error(err);
-      alert("Could not initiate payment. Try again.");
+      alert("Could not start payment");
     }
   };
 
-  return isUserPremium ? (
-    <div>Already a premium user</div>
-  ) : (
-    <div className="min-h-screen bg-gradient-to-br from-[hsl(var(--brand-start)/0.15)] to-[hsl(var(--brand-end)/0.15)] py-16 px-6">
-      <h2 className="text-4xl font-bold text-center text-foreground mb-14">
-        Choose Your Membership
-      </h2>
-      <div className="grid sm:grid-cols-2 gap-10 max-w-5xl mx-auto">
-        {memberships.map((plan, idx) => (
-          <div
-            key={idx}
-            className="rounded-2xl border border-border bg-card shadow-xl p-8 flex flex-col hover:scale-105 transition-transform duration-300"
+  if (isUserPremium)
+    return (
+      <div className="min-h-screen grid place-items-center text-center">
+        <div>
+          <Crown className="mx-auto h-12 w-12 text-yellow-400 mb-3" />
+          <h2 className="text-3xl font-bold text-foreground">
+            You are already an Elite Member!
+          </h2>
+          <p className="text-muted-foreground mt-2">
+            Enjoy all exclusive features and perks ✨
+          </p>
+        </div>
+      </div>
+    );
+
+  return (
+    <div
+      className="relative min-h-screen py-10 px-6 overflow-hidden"
+      style={{
+        background:
+          "radial-gradient(70rem 70rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
+      }}
+    >
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="text-center max-w-3xl mx-auto"
+      >
+        <h1 className="text-4xl md:text-5xl font-extrabold text-foreground leading-tight">
+          Upgrade to{" "}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]">
+            Elite Membership
+          </span>
+        </h1>
+        <p className="mt-4 text-md text-muted-foreground">
+          Unlock advanced tools, analytics, and collaboration opportunities.
+        </p>
+      </motion.div>
+
+      {/* Pricing Cards */}
+      <div className="mt-16 mb-10 grid sm:grid-cols-2 gap-10 max-w-6xl mx-auto relative z-10">
+        {plans.map((plan, i) => (
+          <motion.div
+            key={plan.name}
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.2, duration: 0.6 }}
+            className={`relative rounded-3xl border border-border p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] flex flex-col justify-between ${
+              plan.highlighted
+                ? `bg-gradient-to-br ${plan.color} border-none ${plan.glow}`
+                : "bg-white"
+            }`}
           >
-            <h3 className="text-2xl font-semibold text-foreground">
-              {plan.title}
-            </h3>
-            <p className="text-3xl font-bold mt-2 text-foreground">
-              {plan.price}
-            </p>
-            <p className="text-muted-foreground mt-1">{plan.desc}</p>
+            {/* Popular Tag */}
+            {plan.highlighted && (
+              <div className="absolute top-0 right-0 bg-amber-300 text-black text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-3xl">
+                MOST POPULAR
+              </div>
+            )}
 
-            <ul className="mt-6 space-y-3 flex-1">
-              {plan.features.map((feature, i) => (
-                <li key={i} className="flex items-start gap-2">
-                  <span className="text-green-500">✔</span>
-                  <span className="text-sm text-foreground">{feature}</span>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                {plan.highlighted ? (
+                  <Crown className="h-6 w-6 text-yellow-700" />
+                ) : (
+                  <Star className="h-6 w-6 text-[hsl(var(--brand-start))]" />
+                )}
+                <h3
+                  className={`text-2xl font-bold ${
+                    plan.highlighted ? "text-yellow-800" : "text-foreground"
+                  }`}
+                >
+                  {plan.name}
+                </h3>
+              </div>
 
+              <p
+                className={`text-sm ${
+                  plan.highlighted ? "text-yellow-900/80" : "text-muted-foreground"
+                }`}
+              >
+                {plan.tagline}
+              </p>
+
+              <p
+                className={`mt-5 text-4xl font-extrabold ${
+                  plan.highlighted ? "text-yellow-900" : "text-foreground"
+                }`}
+              >
+                {plan.price}
+              </p>
+
+              <ul className="mt-6 space-y-3">
+                {plan.features.map((f, idx) => (
+                  <li
+                    key={idx}
+                    className={`flex items-start gap-2 ${
+                      plan.highlighted ? "text-yellow-900" : "text-foreground"
+                    }`}
+                  >
+                    <CheckCircle2
+                      className={`h-5 w-5 flex-shrink-0 ${
+                        plan.highlighted
+                          ? "text-yellow-600"
+                          : "text-[hsl(var(--brand-end))]"
+                      }`}
+                    />
+                    <span className="text-sm">{f}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Buttons */}
             <button
               onClick={() => handleBuy(plan.type)}
-              className={`mt-8 border border-gray-500 cursor-pointer w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r ${plan.color} hover:scale-[1.02] transition-all duration-300 ${plan.glow}`}
+              disabled={plan.name === "Current Plan"}
+              className={`mt-10 w-full py-3.5 rounded-xl font-semibold text-white transition ${
+                plan.highlighted
+                  ? "bg-gradient-to-r from-amber-700 via-yellow-700 to-amber-600 hover:opacity-90 shadow-[0_0_25px_rgba(255,190,70,0.5)]"
+                  : "bg-gradient-to-r from-gray-400 to-gray-500 hover:opacity-90"
+              } ${plan.name === "Current Plan" ? "opacity-70 cursor-not-allowed" : ""}`}
             >
-              Get {plan.title}
+              {plan.name === "Current Plan" ? "Activated" : `Get ${plan.name}`}
             </button>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

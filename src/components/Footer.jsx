@@ -1,9 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Github, Linkedin, Mail, Phone, MapPin } from "lucide-react";
+import { Github, Linkedin, Mail, MapPin } from "lucide-react";
 
 const Footer = () => {
   const year = new Date().getFullYear();
+
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <footer
@@ -13,7 +17,6 @@ const Footer = () => {
           "radial-gradient(60rem 60rem at 10% -20%, hsl(var(--brand-start)/.10), transparent), radial-gradient(70rem 70rem at 110% 120%, hsl(var(--brand-end)/.10), transparent), #0a0a0a",
       }}
     >
-      {/* Top divider */}
       <div
         className="h-[1px] w-full"
         style={{
@@ -23,7 +26,7 @@ const Footer = () => {
       />
 
       <div className="mx-auto max-w-7xl px-6 lg:px-10 py-12">
-        {/* CTA band */}
+        {/* CTA Banner */}
         <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm">
           <div
             className="absolute -inset-px rounded-2xl -z-10"
@@ -35,9 +38,7 @@ const Footer = () => {
           />
           <div className="px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <p className="text-xs uppercase tracking-wider text-white/60">
-                DevMatch
-              </p>
+              <p className="text-xs uppercase tracking-wider text-white/60">DevMatch</p>
               <h3 className="mt-1 text-2xl font-bold tracking-tight text-white">
                 Meet your next{" "}
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]">
@@ -45,13 +46,13 @@ const Footer = () => {
                 </span>
               </h3>
               <p className="mt-2 text-white/70 max-w-prose">
-                Discover developers, exchange ideas, and turn connections into
-                real projects.
+                Discover developers, exchange ideas, and turn connections into real projects.
               </p>
             </div>
             <div className="flex items-center gap-3">
               <Link
-                to="/user/feed"
+                to="/feed"
+                onClick={handleScrollToTop}
                 className="inline-flex items-center justify-center h-11 px-5 rounded-lg text-white font-medium shadow-sm hover:opacity-95 transition"
                 style={{
                   background:
@@ -62,6 +63,7 @@ const Footer = () => {
               </Link>
               <Link
                 to="/profile"
+                onClick={handleScrollToTop}
                 className="inline-flex items-center justify-center h-11 px-5 rounded-lg border border-white/10 bg-white/5 text-white/90 hover:bg-white/10 transition"
               >
                 Edit Profile
@@ -70,9 +72,9 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Main columns */}
+        {/* Footer Columns */}
         <div className="mt-12 grid gap-10 md:grid-cols-4">
-          {/* Brand */}
+          {/* Brand Info */}
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2">
               <div
@@ -87,14 +89,13 @@ const Footer = () => {
               <span className="text-lg font-semibold text-white">DevMatch</span>
             </div>
             <p className="text-white/70 leading-relaxed">
-              A platform where developers connect to collaborate and build
-              software together.
+              A platform where developers connect to collaborate and build software together.
             </p>
 
             {/* Socials */}
             <div className="flex items-center gap-3 pt-1">
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/vaidyadandriyal/"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="LinkedIn"
@@ -103,7 +104,7 @@ const Footer = () => {
                 <Linkedin className="h-4.5 w-4.5" />
               </a>
               <a
-                href="https://github.com"
+                href="https://github.com/vaidyad18"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="GitHub"
@@ -121,6 +122,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/"
+                  onClick={handleScrollToTop}
                   className="text-white/70 hover:text-white transition-colors"
                 >
                   Home
@@ -128,23 +130,26 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/user/feed"
+                  to="/feed"
+                  onClick={handleScrollToTop}
                   className="text-white/70 hover:text-white transition-colors"
                 >
                   Explore Feed
                 </Link>
               </li>
               <li>
-                <a
-                  href="/#meet-dev"
+                <Link
+                  to="/meet-dev"
+                  onClick={handleScrollToTop}
                   className="text-white/70 hover:text-white transition-colors"
                 >
                   Meet Dev
-                </a>
+                </Link>
               </li>
               <li>
                 <Link
                   to="/profile"
+                  onClick={handleScrollToTop}
                   className="text-white/70 hover:text-white transition-colors"
                 >
                   Profile
@@ -160,14 +165,16 @@ const Footer = () => {
               <li>
                 <Link
                   to="/terms-&-conditions"
+                  onClick={handleScrollToTop}
                   className="text-white/70 hover:text-white transition-colors"
                 >
-                  Terms &amp; Conditions
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
                 <Link
                   to="/privacy-policy"
+                  onClick={handleScrollToTop}
                   className="text-white/70 hover:text-white transition-colors"
                 >
                   Privacy Policy
@@ -176,32 +183,22 @@ const Footer = () => {
               <li>
                 <Link
                   to="/cancellation-&-refund-policy"
+                  onClick={handleScrollToTop}
                   className="text-white/70 hover:text-white transition-colors"
                 >
-                  Cancellation &amp; Refund
+                  Cancellation & Refund
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact (simplified) */}
+          {/* Contact */}
           <div>
             <h4 className="text-white/90 font-semibold">Contact</h4>
             <ul className="mt-4 space-y-3 text-white/75">
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5 text-white/60" />
-                <span>
-                  Rani Bagh, Pitampura, North West Delhi, Delhi 110034
-                </span>
-              </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-white/60" />
-                <a
-                  href="tel:+917703908277"
-                  className="hover:text-white transition-colors"
-                >
-                  +91 77039 08277
-                </a>
+                <span>Rani Bagh, Pitampura, North West Delhi, Delhi 110034</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-white/60" />
@@ -218,12 +215,11 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-white/10 pt-5">
-          <p className="text-xs text-white/60">
-            © {year} DevMatch. All rights reserved.
-          </p>
+          <p className="text-xs text-white/60">© {year} DevMatch. All rights reserved.</p>
           <div className="flex items-center gap-4 text-xs">
             <Link
               to="/privacy-policy"
+              onClick={handleScrollToTop}
               className="text-white/60 hover:text-white transition-colors"
             >
               Privacy
@@ -231,6 +227,7 @@ const Footer = () => {
             <span className="text-white/20">•</span>
             <Link
               to="/terms-&-conditions"
+              onClick={handleScrollToTop}
               className="text-white/60 hover:text-white transition-colors"
             >
               Terms
@@ -240,7 +237,7 @@ const Footer = () => {
               href="/#"
               onClick={(e) => {
                 e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
+                handleScrollToTop();
               }}
               className="text-white/60 hover:text-white transition-colors"
             >
