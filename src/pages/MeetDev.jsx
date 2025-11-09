@@ -1,5 +1,5 @@
 import { Github, Linkedin, Mail, Rocket, Globe } from "lucide-react";
-import Backbutton from "../components/Backbutton";
+import Backbutton from "../components/BackButton";
 
 const MeetDev = () => {
   return (
