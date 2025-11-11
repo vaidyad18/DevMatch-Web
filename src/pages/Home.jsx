@@ -86,6 +86,7 @@ export default function Home() {
           pointerEvents: "auto",
         }}
       >
+
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
           mouseForce={20}
@@ -124,7 +125,7 @@ export default function Home() {
       >
         <section
           id="home"
-          className="w-full pb-24 md:pb-32 pt-48 px-6 lg:px-10 text-center"
+          className="w-full pb-24 md:pb-32 pt-44 px-6 lg:px-10 text-center"
         >
           <div className="max-w-7xl mx-auto flex flex-col items-center">
             <motion.div
@@ -134,10 +135,10 @@ export default function Home() {
             >
               <span className="inline-flex items-center gap-2 rounded-full border border-white/30 px-3 py-1 text-xs bg-white/10 text-white/80 backdrop-blur-sm">
                 <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]" />
-                DevMatch – Social for Developers
+                DevMatch - Connect. Code. Collaborate.
               </span>
 
-              <h1 className="mt-6 text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight">
+              <h1 className="mt-4 text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight">
                 Meet your next
                 <GradientText
                   colors={[

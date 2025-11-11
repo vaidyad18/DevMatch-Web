@@ -38,7 +38,9 @@ const Footer = () => {
           />
           <div className="px-6 py-8 md:px-10 md:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
             <div>
-              <p className="text-xs uppercase tracking-wider text-white/60">DevMatch</p>
+              <p className="text-xs uppercase tracking-wider text-white/60">
+                DevMatch
+              </p>
               <h3 className="mt-1 text-2xl font-bold tracking-tight text-white">
                 Meet your next{" "}
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]">
@@ -46,7 +48,8 @@ const Footer = () => {
                 </span>
               </h3>
               <p className="mt-2 text-white/70 max-w-prose">
-                Discover developers, exchange ideas, and turn connections into real projects.
+                Discover developers, exchange ideas, and turn connections into
+                real projects.
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -76,20 +79,12 @@ const Footer = () => {
         <div className="mt-12 grid gap-10 md:grid-cols-4">
           {/* Brand Info */}
           <div className="space-y-4">
-            <div className="inline-flex items-center gap-2">
-              <div
-                className="h-9 w-9 rounded-xl grid place-items-center text-white"
-                style={{
-                  background:
-                    "linear-gradient(90deg, hsl(var(--brand-start)), hsl(var(--brand-end)))",
-                }}
-              >
-                <span className="text-sm font-bold">DM</span>
-              </div>
-              <span className="text-lg font-semibold text-white">DevMatch</span>
-            </div>
-            <p className="text-white/70 leading-relaxed">
-              A platform where developers connect to collaborate and build software together.
+              <span className="text-2xl honk font-semibold text-white">
+                DevMatch
+              </span>
+            <p className="text-white/70 mt-2 leading-relaxed">
+              A platform where developers connect to collaborate and build
+              software together.
             </p>
 
             {/* Socials */}
@@ -198,7 +193,9 @@ const Footer = () => {
             <ul className="mt-4 space-y-3 text-white/75">
               <li className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5 text-white/60" />
-                <span>Rani Bagh, Pitampura, North West Delhi, Delhi 110034</span>
+                <span>
+                  Rani Bagh, Pitampura, North West Delhi, Delhi 110034
+                </span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-4 w-4 text-white/60" />
@@ -215,7 +212,9 @@ const Footer = () => {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col md:flex-row items-center justify-between gap-4 border-t border-white/10 pt-5">
-          <p className="text-xs text-white/60">© {year} DevMatch. All rights reserved.</p>
+          <p className="text-xs text-white/60">
+            © {year} DevMatch. All rights reserved.
+          </p>
           <div className="flex items-center gap-4 text-xs">
             <Link
               to="/privacy-policy"

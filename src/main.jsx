@@ -20,6 +20,7 @@ import Memberships from "./pages/Memberships.jsx";
 import Chat from "./pages/Chat.jsx";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import AuthSuccess from "./pages/AuthSuccess.jsx";
+import ChangePassword from "./pages/ChangePassword.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ const appRouter = createBrowserRouter([
         element: <Chat />,
       },
       { path: "auth/success", element: <AuthSuccess /> },
+      {
+        path: "change-password",
+        element: <ChangePassword />,
+      }
     ],
   },
 ]);
