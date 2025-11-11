@@ -35,13 +35,15 @@ function App() {
 
   const isChatPage = location.pathname.startsWith("/chat");
   const isFeedPage = location.pathname.startsWith("/feed");
+  const isLoginSignUp = location.pathname.startsWith("/login") || location.pathname.startsWith("/signup");
+
 
   return (
     <div>
-      {!isChatPage && !isFeedPage && <Navbar />}
+      {!isChatPage && !isFeedPage && !isLoginSignUp && <Navbar />}
       <Outlet />
       <ThemeSwitcher />
-      {!isChatPage && !isFeedPage && <Footer />}
+      {!isChatPage && !isFeedPage && !isLoginSignUp && <Footer />}
     </div>
   );
 }

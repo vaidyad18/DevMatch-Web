@@ -6,11 +6,11 @@ import { createSocketConnection } from "../utils/socket";
 import axios from "axios";
 import { BASE_URL } from "../lib/constants";
 import BackButton from "../components/BackButton";
+import LiquidEther from "../components/LiquidEther";
 
 const Chat = () => {
   const [connections, setConnections] = useState([]);
   const [q, setQ] = useState("");
-
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [peer, setPeer] = useState(null);
@@ -19,9 +19,10 @@ const Chat = () => {
   const userId = loggedInUser?._id;
   const { targetUserId } = useParams();
 
-  // scroll container for messages
   const chatScrollRef = useRef(null);
+  const etherRef = useRef(null);
 
+  // Fetch connections
   useEffect(() => {
     const run = async () => {
       try {
@@ -34,6 +35,24 @@ const Chat = () => {
       }
     };
     run();
+  }, []);
+
+  // Liquid Ether setup
+  useEffect(() => {
+    const proxy = document.getElementById("ether-overlay");
+    if (!proxy || !etherRef.current) return;
+    const etherCanvas = etherRef.current.querySelector("canvas");
+    if (!etherCanvas) return;
+
+    const handleMove = (e) => {
+      const fakeEvent = new MouseEvent("mousemove", {
+        clientX: e.clientX,
+        clientY: e.clientY,
+      });
+      etherCanvas.dispatchEvent(fakeEvent);
+    };
+    proxy.addEventListener("mousemove", handleMove);
+    return () => proxy.removeEventListener("mousemove", handleMove);
   }, []);
 
   const filtered = useMemo(() => {
@@ -54,7 +73,6 @@ const Chat = () => {
     if (!userId || !targetUserId) return;
 
     const socket = createSocketConnection();
-
     socket.emit("joinChat", {
       firstName: loggedInUser.firstName,
       lastName: loggedInUser.lastName,
@@ -78,7 +96,6 @@ const Chat = () => {
     };
 
     socket.on("messageRecieved", onRecv);
-
     return () => {
       socket.off("messageRecieved", onRecv);
       socket.disconnect();
@@ -112,7 +129,6 @@ const Chat = () => {
               createdAt: msg.createdAt,
             };
           }) || [];
-
         setMessages(chatMessages);
       } catch (err) {
         console.error(err);
@@ -143,70 +159,67 @@ const Chat = () => {
   };
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background:
-          "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
-      }}
-    >
-      <div className="fixed top-10 left-4 z-50">
-        <BackButton/>
+    <div className="relative min-h-screen bg-black text-white overflow-hidden">
+      {/* Liquid Ether Background */}
+      <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-auto">
+        <LiquidEther
+          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={false}
+          resolution={0.5}
+          autoDemo={false}
+          autoIntensity={2.2}
+        />
       </div>
+      <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
 
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        {/* Full-height card relative to viewport */}
-        <div className="rounded-2xl overflow-hidden border border-[hsl(220_13%_91%)] bg-white grid grid-cols-1 md:grid-cols-[20rem_1fr] h-[calc(93vh-2rem)]">
+      {/* Chat Layout */}
+      <div className="relative z-20 mx-auto max-w-6xl px-4 py-10">
+        <div className="fixed top-10 left-4 z-50">
+          <BackButton />
+        </div>
+
+        <div className="rounded-2xl overflow-hidden border border-gray-800 bg-[#0b0b0b]/70 backdrop-blur-2xl grid grid-cols-1 md:grid-cols-[20rem_1fr] h-[calc(93vh-2rem)]">
           {/* Sidebar */}
           <aside
-            className={`border-b md:border-b-0 md:border-r border-[hsl(220_13%_91%)] ${
+            className={`border-b md:border-b-0 md:border-r border-gray-800 bg-[#111]/70 backdrop-blur-xl ${
               targetUserId ? "hidden md:block" : "block"
             }`}
           >
-            <div className="p-4 border-b border-[hsl(220_13%_91%)] flex items-center gap-2">
+            <div className="p-4 border-b border-gray-800 flex items-center gap-2">
               <div className="relative flex-1">
                 <input
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   placeholder="Search"
-                  className="w-full h-10 rounded-lg border border-[hsl(220_13%_86%)] pl-9 pr-3 outline-none placeholder:text-[hsl(232_10%_65%)]"
+                  className="w-full h-10 rounded-lg border border-gray-700 bg-[#0d0d0d]/70 text-gray-300 pl-9 pr-3 outline-none placeholder:text-gray-500"
                 />
-                <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-[hsl(232_10%_45%)]" />
+                <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
               </div>
             </div>
-            <ul className="divide-y divide-[hsl(220_13%_91%)] h-[calc(100%-64px)] overflow-y-auto">
+            <ul className="divide-y divide-gray-800 h-[calc(100%-64px)] overflow-y-auto">
               {filtered.map((c) => {
-                const name =
-                  `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim() ||
-                  "Developer";
+                const name = `${c.firstName ?? ""} ${c.lastName ?? ""}`.trim() || "Developer";
                 const active = String(c._id) === String(targetUserId || "");
                 return (
-                  <li
-                    key={c._id}
-                    className={active ? "bg-[hsl(220_13%_98%)]" : ""}
-                  >
+                  <li key={c._id} className={active ? "bg-[#1a1a1a]" : ""}>
                     <Link
                       to={`/chat/${c._id}`}
-                      className="flex items-center gap-3 px-4 py-3 hover:bg-[hsl(220_13%_98%)]"
+                      className="flex items-center gap-3 px-4 py-3 hover:bg-[#1a1a1a]/70 transition"
                     >
-                      <div className="h-11 w-11 rounded-full overflow-hidden bg-[hsl(220_13%_96%)] border border-[hsl(220_13%_91%)] shrink-0">
+                      <div className="h-11 w-11 rounded-full overflow-hidden bg-[#222]/70 border border-gray-700 shrink-0">
                         {c.photoURL ? (
-                          <img
-                            src={c.photoURL}
-                            alt={name}
-                            className="h-full w-full object-cover"
-                          />
+                          <img src={c.photoURL} alt={name} className="h-full w-full object-cover" />
                         ) : (
-                          <div className="grid place-items-center h-full w-full text-[hsl(232_10%_45%)]">
+                          <div className="grid place-items-center h-full w-full text-gray-500">
                             <Users className="h-4 w-4" />
                           </div>
                         )}
                       </div>
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-[hsl(234_12%_12%)] truncate">
-                          {name}
-                        </p>
-                        <p className="text-xs text-[hsl(232_10%_45%)] truncate">
+                        <p className="text-sm font-medium text-gray-100 truncate">{name}</p>
+                        <p className="text-xs text-gray-500 truncate">
                           {c.description || "Tap to chat"}
                         </p>
                       </div>
@@ -218,98 +231,80 @@ const Chat = () => {
           </aside>
 
           {/* Chat window */}
-          <section className="flex min-h-0 flex-col">
-            {/* Header (fixed height) */}
-            <div className="shrink-0 flex items-center gap-3 px-4 sm:px-6 h-16 border-b border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)]">
+          <section className="flex min-h-0 flex-col bg-[#0d0d0d]/80 backdrop-blur-xl">
+            {/* Header */}
+            <div className="shrink-0 flex items-center gap-3 px-4 sm:px-6 h-16 border-b border-gray-800 bg-[#111]/70 backdrop-blur-xl">
               {targetUserId ? (
                 <>
-                  <div className="h-10 w-10 rounded-full overflow-hidden bg-[hsl(220_13%_96%)] border border-[hsl(220_13%_91%)]">
+                  <div className="h-10 w-10 rounded-full overflow-hidden bg-[#222]/70 border border-gray-700">
                     {peer?.photoURL ? (
-                      <img
-                        src={peer.photoURL}
-                        alt="avatar"
-                        className="h-full w-full object-cover"
-                      />
+                      <img src={peer.photoURL} alt="avatar" className="h-full w-full object-cover" />
                     ) : (
-                      <div className="h-full w-full grid place-items-center text-[hsl(232_10%_45%)]">
+                      <div className="h-full w-full grid place-items-center text-gray-500">
                         <Users className="h-4 w-4" />
                       </div>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <h2 className="text-sm sm:text-base font-semibold text-[hsl(234_12%_12%)] truncate">
-                      {peer
-                        ? `${peer.firstName ?? ""} ${
-                            peer.lastName ?? ""
-                          }`.trim()
-                        : "Developer"}
+                    <h2 className="text-sm sm:text-base font-semibold text-gray-100 truncate">
+                      {peer ? `${peer.firstName ?? ""} ${peer.lastName ?? ""}`.trim() : "Developer"}
                     </h2>
-                    <p className="text-xs text-[hsl(232_10%_45%)]">Online</p>
+                    <p className="text-xs text-gray-500">Online</p>
                   </div>
                 </>
               ) : (
-                <div className="flex items-center gap-2 text-[hsl(232_10%_45%)]">
+                <div className="flex items-center gap-2 text-gray-500">
                   <MessageSquare className="h-4 w-4" />
                   <span className="text-sm">Select a chat from the left</span>
                 </div>
               )}
             </div>
 
-            {/* Messages area (fills remaining height) */}
-            <div className="flex-1 min-h-0 ">
+            {/* Messages area */}
+            <div className="flex-1 min-h-0">
               {targetUserId ? (
-                // chat open → scroll container bottom-pinned
-                <div
-                  ref={chatScrollRef}
-                  className="h-full py-4 overflow-y-auto"
-                >
+                <div ref={chatScrollRef} className="h-full py-4 overflow-y-auto px-4">
                   <div className="min-h-full flex flex-col justify-end gap-2">
                     {messages.map((msg, index) => {
                       const mine =
                         String(msg.senderId || "") === String(userId || "") ||
                         msg.firstName === loggedInUser.firstName;
                       return (
-                        <div
-                          key={index}
-                          className={`chat px-6 ${
-                            mine ? "chat-end" : "chat-start"
-                          }`}
-                        >
+                        <div key={index} className={`chat px-6 ${mine ? "chat-end" : "chat-start"}`}>
                           <div className="chat-image avatar">
-                            <div className="w-10 rounded-full overflow-hidden bg-[hsl(220_13%_96%)]">
+                            <div className="w-10 rounded-full overflow-hidden bg-[#222]/70 border border-gray-700">
                               {msg.photoURL ? (
                                 <img src={msg.photoURL} alt="" />
                               ) : (
                                 <div className="w-10 h-10 grid place-items-center">
-                                  <Users className="h-4 w-4 text-[hsl(232_10%_45%)]" />
+                                  <Users className="h-4 w-4 text-gray-500" />
                                 </div>
                               )}
                             </div>
                           </div>
-                          <div className="chat-header">
-                            {(msg.firstName ?? "Developer") +
-                              " " +
-                              (msg.lastName ?? "")}
+                          <div className="chat-header text-gray-400">
+                            {(msg.firstName ?? "Developer") + " " + (msg.lastName ?? "")}
                           </div>
-                          <div className="chat-bubble">{msg.text}</div>
+                          <div className="chat-bubble bg-[#1a1a1a]/90 text-gray-200 border border-gray-700">
+                            {msg.text}
+                          </div>
                         </div>
                       );
                     })}
                   </div>
                 </div>
               ) : (
-                // chat closed → same height area
                 <div className="h-full grid place-items-center">
                   <div className="relative w-full max-w-md">
                     <div className="absolute inset-0 blur-2xl" />
-                    <div className="relative bg-white rounded-3xl border border-[hsl(220_13%_91%)] p-8 text-center shadow-xl">
-                      <div className="mx-auto h-14 w-14 rounded-2xl grid place-items-center border border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)]">
-                        <MessageSquare className="h-6 w-6 text-[hsl(232_10%_45%)]" />
+                    <div className="relative bg-[#111]/80 backdrop-blur-xl rounded-3xl border border-gray-700 p-8 text-center shadow-xl">
+                      <div className="mx-auto h-14 w-14 rounded-2xl grid place-items-center border border-gray-700 bg-[#1a1a1a]/70">
+                        <MessageSquare className="h-6 w-6 text-gray-400" />
                       </div>
-                      <h3 className="mt-4 text-xl font-bold text-[hsl(234_12%_12%)]">
+                      <h3 className="mt-4 text-xl font-bold text-gray-100">
                         Start a conversation
                       </h3>
-                      <p className="mt-2 text-sm text-[hsl(232_10%_45%)]">
+                      <p className="mt-2 text-sm text-gray-500">
                         Pick a connection from the left to begin chatting. Your
                         messages will appear here.
                       </p>
@@ -319,9 +314,9 @@ const Chat = () => {
               )}
             </div>
 
-            {/* Composer (reserve height when hidden to keep total equal) */}
+            {/* Composer */}
             {targetUserId ? (
-              <div className="shrink-0 border-t border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)] px-3 sm:px-6 py-3">
+              <div className="shrink-0 border-t border-gray-800 bg-[#111]/70 backdrop-blur-xl px-3 sm:px-6 py-3">
                 <form
                   className="flex items-center gap-2"
                   onSubmit={(e) => {
@@ -335,7 +330,7 @@ const Chat = () => {
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       placeholder="Type a message..."
-                      className="w-full h-11 rounded-xl border border-[hsl(220_13%_86%)] bg-white pl-4 pr-12 outline-none placeholder:text-[hsl(232_10%_65%)] text-[hsl(234_12%_12%)]"
+                      className="w-full h-11 rounded-xl border border-gray-700 bg-[#0d0d0d]/70 text-gray-200 pl-4 pr-12 outline-none placeholder:text-gray-500"
                     />
                   </div>
 
@@ -349,7 +344,6 @@ const Chat = () => {
                 </form>
               </div>
             ) : (
-              // Invisible spacer matching composer height (keeps overall height identical)
               <div className="shrink-0 h-[56px] sm:h-[56px] border-t border-transparent pointer-events-none select-none" />
             )}
           </section>

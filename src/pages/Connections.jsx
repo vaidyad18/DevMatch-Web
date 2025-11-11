@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import UserCard from "../components/UserCard";
+import LiquidEther from "../components/LiquidEther";
+import BackButton from "../components/BackButton";
 
 const HoverPreview = ({ user, children, side = "right" }) => {
   const [open, setOpen] = useState(false);
@@ -31,13 +33,11 @@ const HoverPreview = ({ user, children, side = "right" }) => {
       onBlur={closeNow}
     >
       {children}
-
       {open && (
         <div
-          className={[
-            "absolute z-50 top-1/2 -translate-y-1/2",
-            side === "right" ? "left-full ml-3" : "right-full mr-3",
-          ].join(" ")}
+          className={`absolute z-50 top-1/2 -translate-y-1/2 ${
+            side === "right" ? "left-full ml-3" : "right-full mr-3"
+          }`}
         >
           <div className="pointer-events-none w-72 max-w-[18rem]">
             <UserCard user={user} />
@@ -55,6 +55,8 @@ const Connections = () => {
 
   const [tab, setTab] = useState("connections");
   const [q, setQ] = useState("");
+
+  const etherRef = useRef(null);
 
   // Fetch data
   const fetchConnections = async () => {
@@ -82,7 +84,24 @@ const Connections = () => {
   useEffect(() => {
     fetchConnections();
     fetchRequests();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Liquid Ether setup
+  useEffect(() => {
+    const proxy = document.getElementById("ether-overlay");
+    if (!proxy || !etherRef.current) return;
+    const etherCanvas = etherRef.current.querySelector("canvas");
+    if (!etherCanvas) return;
+
+    const handleMove = (e) => {
+      const fakeEvent = new MouseEvent("mousemove", {
+        clientX: e.clientX,
+        clientY: e.clientY,
+      });
+      etherCanvas.dispatchEvent(fakeEvent);
+    };
+    proxy.addEventListener("mousemove", handleMove);
+    return () => proxy.removeEventListener("mousemove", handleMove);
   }, []);
 
   // Filter helpers
@@ -147,94 +166,101 @@ const Connections = () => {
   const connectionsCount = Array.isArray(connections) ? connections.length : 0;
   const requestsCount = Array.isArray(requests) ? requests.length : 0;
 
+  // Handle empty states
+  const emptyText =
+    tab === "connections"
+      ? q
+        ? "No connections found"
+        : "You have no connections yet"
+      : q
+      ? "No requests found"
+      : "No new requests";
+
   return (
-    <div
-      className="min-h-screen px-4 py-8"
-      style={{
-        background:
-          "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
-      }}
-    >
-      <div className="mx-auto max-w-5xl">
-        {/* Top Header + Toggle */}
-        <div className="mb-6 text-center">
-          <p className="mt-4 text-2xl sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] font-bold tracking-tight">
+    <div className="relative min-h-screen bg-black text-white overflow-hidden">
+      {/* Liquid Ether Background */}
+      <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-auto">
+        <LiquidEther
+          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={false}
+          resolution={0.5}
+          autoDemo={false}
+          autoIntensity={2.2}
+        />
+      </div>
+      <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
+
+      {/* Main Content */}
+      <div className="relative z-20 mx-auto max-w-5xl px-4 pb-20 pt-10">
+        <div className="absolute top-24  z-50">
+          <BackButton />
+        </div>
+
+        {/* Header */}
+        <div className="mb-8 pt-16 text-center">
+          <p className="mt-4 text-3xl sm:text-4xl bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] font-bold tracking-tight">
             Your Network
           </p>
-          <p className="mt-1 text-lg text-[hsl(232_10%_45%)]">
-            Manage your developer connections
-          </p>
+          <p className="mt-1 text-gray-400">Manage your developer connections</p>
 
-          <div className="mt-5 inline-flex rounded-full p-1 border border-[hsl(220_13%_91%)] bg-white shadow-sm">
+          <div className="mt-5 inline-flex rounded-full p-1 border border-gray-700 bg-[#0d0d0d]/70 backdrop-blur-xl shadow-sm">
             <button
               onClick={() => setTab("connections")}
-              className={`relative inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium ${
+              className={`relative cursor-pointer inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium transition ${
                 tab === "connections"
-                  ? "bg-[hsl(220_13%_96%)] text-[hsl(234_12%_12%)]"
-                  : "text-[hsl(232_10%_45%)]"
+                  ? "bg-[hsl(var(--brand-start))]/20 text-white"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               Connections
-              <span className="ml-1 inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full text-xs border bg-white">
+              <span className="ml-1 inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full text-xs border border-gray-700 bg-[#111]/70 text-gray-300">
                 {connectionsCount}
               </span>
             </button>
 
             <button
               onClick={() => setTab("requests")}
-              className={`relative inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium ${
+              className={`relative cursor-pointer inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium transition ${
                 tab === "requests"
-                  ? "bg-[hsl(220_13%_96%)] text-[hsl(234_12%_12%)]"
-                  : "text-[hsl(232_10%_45%)]"
+                  ? "bg-[hsl(var(--brand-start))]/20 text-white"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               Requests
-              <span className="ml-1 inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full text-xs border bg-white">
+              <span className="ml-1 inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full text-xs border border-gray-700 bg-[#111]/70 text-gray-300">
                 {requestsCount}
               </span>
             </button>
           </div>
         </div>
 
-        {/* Frame */}
-        <div
-          className="relative rounded-2xl "
-          style={{
-            background:
-              "linear-gradient(#ffffff,#ffffff) padding-box, linear-gradient(90deg,hsl(var(--brand-start)),hsl(var(--brand-end))) border-box",
-            border: "1px solid transparent",
-          }}
-        >
-          <div className="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-white border border-[hsl(220_13%_91%)] p-5 sm:p-6">
-            {/* Search */}
-            <div className="relative w-full sm:w-80 mb-5">
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                placeholder={`Search ${tab}...`}
-                className="w-full h-11 rounded-md text-black border border-gray-300 pl-10 pr-3 outline-none"
-              />
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(232_10%_45%)]" />
-            </div>
+        {/* Inner Box */}
+        <div className="rounded-2xl bg-[#0b0b0b]/70 backdrop-blur-xl border border-gray-800 p-6 shadow-lg">
+          {/* Search */}
+          <div className="relative w-full sm:w-80 mb-6">
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder={`Search ${tab}...`}
+              className="w-full h-11 rounded-md border border-gray-700 bg-[#111]/70 text-gray-200 pl-10 pr-3 outline-none placeholder:text-gray-500"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          </div>
 
-            {tab === "connections" ? (
+          {tab === "connections" ? (
+            filteredConnections.length > 0 ? (
               <ul className="grid gap-4 md:grid-cols-2">
                 {filteredConnections.map((c) => {
-                  const {
-                    firstName,
-                    lastName,
-                    age,
-                    gender,
-                    description,
-                    photoURL,
-                  } = c;
+                  const { firstName, lastName, age, gender, description, photoURL } = c;
                   const name = `${firstName || ""} ${lastName || ""}`.trim();
                   return (
                     <li key={c._id}>
-                      <div className="border border-[hsl(220_13%_91%)] flex items-center justify-between rounded-xl p-4 hover:shadow-lg transition">
+                      <div className="border border-gray-800 bg-[#111]/70 rounded-xl p-4 flex items-center justify-between hover:shadow-lg transition">
                         <div className="flex items-start gap-3">
                           <HoverPreview user={c}>
-                            <div className="h-14 w-14 rounded-full bg-[hsl(220_13%_96%)] border border-[hsl(220_13%_91%)] overflow-hidden shrink-0">
+                            <div className="h-14 w-14 rounded-full bg-[#1a1a1a]/70 border border-gray-700 overflow-hidden shrink-0">
                               {photoURL ? (
                                 <img
                                   src={photoURL}
@@ -242,7 +268,7 @@ const Connections = () => {
                                   className="h-full w-full object-cover"
                                 />
                               ) : (
-                                <div className="h-full w-full grid place-items-center text-[hsl(232_10%_45%)]">
+                                <div className="h-full w-full grid place-items-center text-gray-500">
                                   <Users className="h-5 w-5" />
                                 </div>
                               )}
@@ -250,15 +276,11 @@ const Connections = () => {
                           </HoverPreview>
 
                           <div className="min-w-0 flex-1">
-                            <h3 className="font-semibold text-[hsl(234_12%_12%)] truncate">
-                              {name}
-                            </h3>
-                            <p className="text-sm text-[hsl(232_10%_45%)]">
+                            <h3 className="font-semibold text-gray-100 truncate">{name}</h3>
+                            <p className="text-sm text-gray-400">
                               {age ? `${age} yrs` : "—"} {gender}
                             </p>
-                            <p className="text-sm text-[hsl(232_10%_35%)] mt-2 line-clamp-2">
-                              {description}
-                            </p>
+                            <p className="text-sm text-gray-400 mt-2 line-clamp-2">{description}</p>
                           </div>
                         </div>
 
@@ -273,76 +295,61 @@ const Connections = () => {
                 })}
               </ul>
             ) : (
-              <ul className="grid gap-4 md:grid-cols-2">
-                {filteredRequests.map((r) => {
-                  const u = r.fromUserId || {};
-                  const {
-                    firstName,
-                    lastName,
-                    age,
-                    gender,
-                    description,
-                    photoURL,
-                  } = u;
-                  const name = `${firstName || ""} ${lastName || ""}`.trim();
-                  return (
-                    <li key={r._id}>
-                      <div className="border border-[hsl(220_13%_91%)] rounded-xl p-4 hover:shadow-lg transition">
-                        <div className="flex items-start gap-3">
-                          <HoverPreview user={u}>
-                            <div className="h-14 w-14 rounded-full bg-[hsl(220_13%_96%)] border border-[hsl(220_13%_91%)] overflow-hidden shrink-0">
-                              {photoURL ? (
-                                <img
-                                  src={photoURL}
-                                  alt={name}
-                                  className="h-full w-full object-cover"
-                                />
-                              ) : (
-                                <div className="h-full w-full grid place-items-center text-[hsl(232_10%_45%)]">
-                                  <Users className="h-5 w-5" />
-                                </div>
-                              )}
-                            </div>
-                          </HoverPreview>
+              <EmptyBox text={emptyText} />
+            )
+          ) : filteredRequests.length > 0 ? (
+            <ul className="grid gap-4 md:grid-cols-2">
+              {filteredRequests.map((r) => {
+                const u = r.fromUserId || {};
+                const { firstName, lastName, age, gender, description, photoURL } = u;
+                const name = `${firstName || ""} ${lastName || ""}`.trim();
+                return (
+                  <li key={r._id}>
+                    <div className="border border-gray-800 bg-[#111]/70 rounded-xl p-4 hover:shadow-lg transition">
+                      <div className="flex items-start gap-3">
+                        <HoverPreview user={u}>
+                          <div className="h-14 w-14 rounded-full bg-[#1a1a1a]/70 border border-gray-700 overflow-hidden shrink-0">
+                            {photoURL ? (
+                              <img src={photoURL} alt={name} className="h-full w-full object-cover" />
+                            ) : (
+                              <div className="h-full w-full grid place-items-center text-gray-500">
+                                <Users className="h-5 w-5" />
+                              </div>
+                            )}
+                          </div>
+                        </HoverPreview>
 
-                          <div className="min-w-0 flex-1">
-                            <h3 className="font-semibold text-[hsl(234_12%_12%)] truncate">
-                              {name}
-                            </h3>
-                            <p className="text-sm text-[hsl(232_10%_45%)]">
-                              {age ? `${age} yrs` : "—"} {gender}
-                            </p>
-                            <p className="text-sm text-[hsl(232_10%_35%)] mt-2 line-clamp-2">
-                              {description}
-                            </p>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-gray-100 truncate">{name}</h3>
+                          <p className="text-sm text-gray-400">
+                            {age ? `${age} yrs` : "—"} {gender}
+                          </p>
+                          <p className="text-sm text-gray-400 mt-2 line-clamp-2">{description}</p>
 
-                            <div className="mt-3 flex gap-2">
-                              <button
-                                onClick={() =>
-                                  reviewRequest("accepted", firstName, r._id)
-                                }
-                                className="bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-white px-3 py-1 rounded-md flex items-center gap-1"
-                              >
-                                <Check className="h-4" /> Accept
-                              </button>
-                              <button
-                                onClick={() =>
-                                  reviewRequest("rejected", firstName, r._id)
-                                }
-                                className="border border-[hsl(220_13%_91%)] px-3 py-1 rounded-md text-gray-600 flex items-center gap-1"
-                              >
-                                <X className="h-4" /> Reject
-                              </button>
-                            </div>
+                          <div className="mt-3 flex gap-2">
+                            <button
+                              onClick={() => reviewRequest("accepted", firstName, r._id)}
+                              className="bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-white px-3 py-1 rounded-md flex items-center gap-1"
+                            >
+                              <Check className="h-4" /> Accept
+                            </button>
+                            <button
+                              onClick={() => reviewRequest("rejected", firstName, r._id)}
+                              className="border border-gray-700 px-3 py-1 rounded-md text-gray-400 flex items-center gap-1 hover:bg-[#1a1a1a]/70"
+                            >
+                              <X className="h-4" /> Reject
+                            </button>
                           </div>
                         </div>
                       </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
-          </div>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          ) : (
+            <EmptyBox text={emptyText} />
+          )}
         </div>
       </div>
 
@@ -350,5 +357,17 @@ const Connections = () => {
     </div>
   );
 };
+
+const EmptyBox = ({ text }) => (
+  <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="h-14 w-14 rounded-2xl grid place-items-center border border-gray-700 bg-[#1a1a1a]/70 mb-4">
+      <Users className="h-6 w-6 text-gray-400" />
+    </div>
+    <h3 className="text-lg font-semibold text-gray-100">{text}</h3>
+    <p className="text-sm text-gray-500 mt-2">
+      Try refreshing the page or check back later for updates.
+    </p>
+  </div>
+);
 
 export default Connections;

@@ -4,10 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL } from "../lib/constants";
 import { removeUser } from "../utils/userSlice";
 import { useState } from "react";
-import { Menu, X, LogOut, UserRound, Users as UsersIcon, Key, CardSim } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  UserRound,
+  Users as UsersIcon,
+  Key,
+  LayoutGrid,
+  MessageSquare,
+} from "lucide-react";
 import LOGO from "../assets/logo.png";
-
-
 
 const Navbar = () => {
   const user = useSelector((store) => store.user);
@@ -26,135 +33,97 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur bg-card/80 shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="flex h-16 items-center justify-between">
-          <Link to="/" className="flex items-center gap-2 group">
-            <div className="relative rounded-xl p-[1px]">
-              <div className=" bg-card">
-                <img
-                  className="w-9 h-9 object-cover"
-                  src={LOGO}
-                  alt="DevMatch logo"
-                />
-              </div>
-            </div>
-            <span className="text-xl  font-bold tracking-tight text-foreground">
+    <nav className="fixed top-6 left-1/2 -translate-x-1/2 z-50 w-[70%] max-w-6xl border border-white/15 bg-[#0b0b0b]/70 backdrop-blur-2xl rounded-full shadow-[0_0_15px_rgba(0,0,0,0.4)]">
+      <div className="px-5 md:px-8">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3">
+            <img src={LOGO} alt="DevMatch logo" className="w-8 h-8 object-cover" />
+            <span className="text-xl font-semibold text-white tracking-tight">
               DevMatch
             </span>
           </Link>
 
-          {/* Right actions */}
-          <div className="hidden lg:flex items-center gap-4">
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-6">
             {!user ? (
-              <>
-                <Link to="/signup">
-                  <button className="px-4 py-2 text-sm font-medium text-gray-600 rounded-md border border-border hover:bg-gray-100 transition">
-                    Signup
-                  </button>
-                </Link>
-                <Link to="/login">
-                  <button className="px-4 py-2 text-sm font-medium rounded-md text-white bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-95 transition shadow-sm">
-                    Join DevMatch
-                  </button>
-                </Link>
-              </>
+              <Link to="/login">
+                <button className="px-5 py-2 text-sm font-medium text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/15 transition">
+                  Get Started
+                </button>
+              </Link>
             ) : (
               <div className="flex items-center gap-5">
-
-                <span className="hidden xl:inline text-sm text-muted-foreground">
-                  Welcome,{" "}
-                  <span className="font-semibold text-foreground">
-                    {user.firstName}
-                  </span>
-                </span>
-
+                {/* Feed */}
                 <Link
                   to="/feed"
-                  className="hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border text-sm font-medium text-muted-foreground hover:bg-[hsl(var(--secondary))] transition"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md border border-white/20 bg-transparent text-gray-300 hover:bg-white/10 transition"
                 >
-                  <CardSim/>
+                  <LayoutGrid className="h-4 w-4 text-gray-400" />
                   Feed
                 </Link>
 
+                {/* Chat */}
                 <Link
                   to="/chat"
-                  className="hidden lg:inline-flex items-center gap-2 px-3 py-2 rounded-md border border-border text-sm font-medium text-muted-foreground hover:bg-[hsl(var(--secondary))] transition"
+                  className="flex items-center gap-2 px-4 py-2 rounded-md border border-white/20 bg-transparent text-gray-300 hover:bg-white/10 transition"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <path
-                      d="M21 15a4 4 0 0 1-4 4H7l-4 4V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4v8Z"
-                      strokeWidth="1.5"
-                    />
-                  </svg>
+                  <MessageSquare className="h-4 w-4 text-gray-400" />
                   Chat
                 </Link>
 
+                {/* Avatar Dropdown */}
                 <div className="dropdown dropdown-end">
                   <div
                     tabIndex={0}
                     role="button"
                     className="btn btn-ghost btn-circle avatar"
                   >
-                    <div className="w-10 rounded-full ring-1 ring-border">
+                    <div className="w-10 rounded-full ring-1 ring-white/20">
                       <img
-                        className="border rounded-full object-cover"
                         alt={user.firstName}
                         src={
                           user.photoURL ||
-                          "https://dummyimage.com/100x100/eee/aaa&text=👤"
+                          "https://dummyimage.com/100x100/333/aaa&text=👤"
                         }
                         onError={(e) =>
                           (e.currentTarget.src =
-                            "https://dummyimage.com/100x100/eee/aaa&text=👤")
+                            "https://dummyimage.com/100x100/333/aaa&text=👤")
                         }
+                        className="object-cover rounded-full"
                       />
                     </div>
                   </div>
+
                   <ul
                     tabIndex={0}
-                    className="menu menu-md dropdown-content bg-white text-muted-foreground rounded-xl z-10 mt-3 w-56 p-2 border border-border shadow-xl"
+                    className="menu menu-md dropdown-content bg-[#111]/95 text-gray-300 rounded-xl z-20 mt-3 w-56 p-2 border border-white/10 shadow-lg backdrop-blur-xl"
                   >
-                    <div className="px-2 pt-2 pb-1 text-xs">
+                    <div className="px-2 pt-2 pb-1 text-xs text-gray-400">
                       Signed in as{" "}
-                      <span className="font-semibold mt-1 text-[13px] text-foreground">
+                      <span className="font-semibold mt-1 text-[13px] text-white">
                         {user.firstName}
                       </span>
                     </div>
                     <li>
-                      <Link to="/profile" className="flex items-center gap-2">
-                        <UserRound className="h-4 w-4" />{" "}
-                        <span className="text-foreground">Profile</span>
+                      <Link to="/profile" className="flex items-center gap-2 hover:text-white">
+                        <UserRound className="h-4 w-4 text-gray-400" /> Profile
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        to="/connections"
-                        className="flex items-center gap-2"
-                      >
-                        <UsersIcon className="h-4 w-4" />{" "}
-                        <span className="text-foreground">Connections</span>
+                      <Link to="/connections" className="flex items-center gap-2 hover:text-white">
+                        <UsersIcon className="h-4 w-4 text-gray-400" /> Connections
                       </Link>
                     </li>
                     <li>
-                      <Link
-                        to="/"
-                        className="flex items-center gap-2"
-                      >
-                        <Key className="h-4 w-4" />{" "}
-                        <span className="text-foreground">Change password</span>
+                      <Link to="/" className="flex items-center gap-2 hover:text-white">
+                        <Key className="h-4 w-4 text-gray-400" /> Change password
                       </Link>
                     </li>
                     <li>
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 text-[hsl(var(--destructive))] hover:opacity-90"
+                        className="flex items-center gap-2 text-red-500 hover:text-red-400"
                       >
                         <LogOut className="h-4 w-4" /> Logout
                       </button>
@@ -165,38 +134,67 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Mobile toggle */}
+          {/* Mobile Toggle */}
           <button
-            onClick={() => setOpen((s) => !s)}
-            className="lg:hidden h-10 w-10 grid place-items-center rounded-md border border-border hover:bg-[hsl(var(--secondary))] transition"
+            onClick={() => setOpen(!open)}
+            className="lg:hidden h-10 w-10 grid place-items-center rounded-md border border-white/20 hover:bg-white/10 transition"
             aria-label="Toggle menu"
           >
-            {open ? (
-              <X className="h-5 w-5 text-foreground" />
-            ) : (
-              <Menu className="h-5 w-5 text-foreground" />
-            )}
+            {open ? <X className="h-5 w-5 text-white" /> : <Menu className="h-5 w-5 text-white" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile panel */}
+      {/* Mobile Menu */}
       {open && (
-        <div className="lg:hidden bg-card/95 backdrop-blur">
-          <div className="mx-auto max-w-7xl px-4 py-4 flex flex-col gap-4">
-            {!user && (
-              <div className="flex items-center gap-3 pt-2">
+        <div className="lg:hidden bg-[#0b0b0b]/90 backdrop-blur-xl border-t border-white/10 rounded-b-3xl">
+          <div className="px-5 py-5 flex flex-col gap-4 text-center">
+            {!user ? (
+              <>
                 <Link to="/signup" onClick={() => setOpen(false)}>
-                  <button className="px-4 py-2 text-sm font-medium text-gray-600 rounded-md border border-border hover:bg-gray-100 transition">
+                  <button className="w-full px-4 py-2 text-sm font-medium text-gray-300 rounded-md border border-white/20 hover:bg-white/10 transition">
                     Signup
                   </button>
                 </Link>
                 <Link to="/login" onClick={() => setOpen(false)}>
-                  <button className="px-4 py-2 text-sm font-medium rounded-md text-white bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-95 transition shadow-sm">
+                  <button className="w-full px-4 py-2 text-sm font-medium text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/15 transition">
                     Join DevMatch
                   </button>
                 </Link>
-              </div>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/feed"
+                  onClick={() => setOpen(false)}
+                  className="text-gray-300 hover:text-white transition"
+                >
+                  Feed
+                </Link>
+                <Link
+                  to="/chat"
+                  onClick={() => setOpen(false)}
+                  className="text-gray-300 hover:text-white transition"
+                >
+                  Chat
+                </Link>
+                <Link
+                  to="/profile"
+                  onClick={() => setOpen(false)}
+                  className="text-gray-300 hover:text-white transition"
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setOpen(false);
+                  }}
+                  className="text-red-500 hover:text-red-400 transition"
+                >
+                  Logout
+                </button>
+              </>
             )}
           </div>
         </div>

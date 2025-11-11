@@ -1,6 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "../lib/constants";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed, removeUserFromFeed } from "../utils/feedSlice";
 import UserCard from "../components/UserCard";
@@ -13,6 +13,7 @@ import {
   AnimatePresence,
   useAnimation,
 } from "framer-motion";
+import LiquidEther from "../components/LiquidEther";
 
 const SWIPE_THRESHOLD = 140;
 
@@ -20,6 +21,7 @@ const Feed = () => {
   const dispatch = useDispatch();
   const feed = useSelector((store) => store.feed) || [];
   const [exitingId, setExitingId] = useState(null);
+  const etherRef = useRef(null);
 
   const fetchFeed = async () => {
     try {
@@ -49,7 +51,24 @@ const Feed = () => {
 
   useEffect(() => {
     if (!feed || feed.length === 0) fetchFeed();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Liquid Ether movement setup
+  useEffect(() => {
+    const proxy = document.getElementById("ether-overlay");
+    if (!proxy || !etherRef.current) return;
+    const etherCanvas = etherRef.current.querySelector("canvas");
+    if (!etherCanvas) return;
+
+    const handleMove = (e) => {
+      const fakeEvent = new MouseEvent("mousemove", {
+        clientX: e.clientX,
+        clientY: e.clientY,
+      });
+      etherCanvas.dispatchEvent(fakeEvent);
+    };
+    proxy.addEventListener("mousemove", handleMove);
+    return () => proxy.removeEventListener("mousemove", handleMove);
   }, []);
 
   const dispatchSwipe = useCallback((dir) => {
@@ -74,29 +93,30 @@ const Feed = () => {
 
   if (feed.length === 0) {
     return (
-      <div
-        className="min-h-screen flex items-center justify-center px-4"
-        style={{
-          background:
-            "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
-        }}
-      >
-        <div className="fixed top-10 left-4 z-50">
-          <BackButton />
+      <div className="relative min-h-screen flex items-center justify-center bg-black text-white overflow-hidden">
+        {/* Liquid Ether Background */}
+        <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-auto">
+          <LiquidEther
+            colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+            mouseForce={20}
+            cursorSize={100}
+            isViscous={false}
+            resolution={0.5}
+            autoDemo={false}
+            autoIntensity={2.2}
+          />
         </div>
-        <div
-          className="relative rounded-2xl p-[1px] w-full max-w-md"
-          style={{
-            background:
-              "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
-          }}
-        >
-          <div className="rounded-[calc(theme(borderRadius.2xl)-1px)] bg-white border border-[hsl(220_13%_91%)] p-8 text-center">
-            <Users className="h-12 w-12 mx-auto text-[hsl(232_10%_45%)]" />
-            <h2 className="mt-4 text-xl font-bold text-[hsl(234_12%_12%)]">
-              No more users
-            </h2>
-            <p className="mt-2 text-[hsl(232_10%_45%)] text-sm">
+        <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
+
+        <div className="relative z-20 text-center px-6">
+          <div className="fixed top-10 left-4 z-50">
+            <BackButton />
+          </div>
+
+          <div className="max-w-md mx-auto bg-[#0b0b0b]/70 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-lg">
+            <Users className="h-12 w-12 mx-auto text-gray-400" />
+            <h2 className="mt-4 text-xl font-bold text-white">No more users</h2>
+            <p className="mt-2 text-gray-400 text-sm">
               You’ve reached the end of your feed. Check back later for new
               developers to connect with!
             </p>
@@ -109,19 +129,29 @@ const Feed = () => {
   const topUser = feed[0];
 
   return (
-    <div
-      className="min-h-screen flex -mt-16 items-center justify-center w-full"
-      style={{
-        background:
-          "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
-      }}
-    >
-      <div className="flex flex-col lg:flex-row gap-10 pt-28 pb-10 items-center w-full max-w-6xl px-4">
+    <div className="relative min-h-screen flex items-center justify-center bg-black text-white overflow-hidden">
+      {/* Liquid Ether Background */}
+      <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-auto">
+        <LiquidEther
+          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={false}
+          resolution={0.5}
+          autoDemo={false}
+          autoIntensity={2.2}
+        />
+      </div>
+      <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
+
+      {/* Content */}
+      <div className="relative z-20 flex flex-col lg:flex-row gap-10  pb-10 items-center w-full max-w-6xl px-4">
         <div className="fixed top-10 left-4 z-50">
           <BackButton />
         </div>
 
-        <div className="flex flex-col items-center gap-6 flex-1">
+        {/* Swipe Area */}
+        <div className="flex flex-col z-1000 scale-95 items-center gap-6 flex-1">
           <SwipeCard
             key={topUser._id}
             user={topUser}
@@ -135,64 +165,54 @@ const Feed = () => {
             }}
           />
 
-          <div className="flex items-center mt-4 gap-6">
+          <div className="flex -mb-12 -mt-2 items-center gap-6">
             <TriggerButton
               direction="left"
               onTrigger={() => dispatchSwipe("left")}
             >
-              <X className="h-7 w-7 text-red-500" />
+              <X className="h-7 w-7 text-red-400" />
             </TriggerButton>
 
             <TriggerButton
               direction="right"
               onTrigger={() => dispatchSwipe("right")}
             >
-              <Heart className="h-7 w-7 text-green-500" />
+              <Heart className="h-7 w-7 text-green-400" />
             </TriggerButton>
           </div>
         </div>
 
-        <aside className="hidden absolute right-32 top-40 lg:block w-[320px]">
-          <div className="rounded-2xl border border-[hsl(220_13%_91%)] bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-2 text-[hsl(232_10%_45%)]">
+        {/* Sidebar (Shortcuts) */}
+        <aside className="hidden absolute right-0 top-40 lg:block w-[320px]">
+          <div className="rounded-2xl border border-gray-800 bg-[#0d0d0d]/70 backdrop-blur-xl p-5 shadow-lg">
+            <div className="flex items-center gap-2 text-gray-400">
               <Keyboard className="h-4 w-4" />
               <span className="text-sm font-semibold">Shortcuts</span>
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 rounded-md border border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)]">
-                  A
-                </span>
-                <span className="text-[hsl(232_10%_45%)]">Left swipe</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 rounded-md border border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)]">
-                  D
-                </span>
-                <span className="text-[hsl(232_10%_45%)]">Right swipe</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 rounded-md border border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)]">
-                  ←
-                </span>
-                <span className="text-[hsl(232_10%_45%)]">Left swipe</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-1 rounded-md border border-[hsl(220_13%_91%)] bg-[hsl(220_13%_98%)]">
-                  →
-                </span>
-                <span className="text-[hsl(232_10%_45%)]">Right swipe</span>
-              </div>
+              {[
+                ["A", "Left swipe"],
+                ["D", "Right swipe"],
+                ["←", "Left swipe"],
+                ["→", "Right swipe"],
+              ].map(([key, label], i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="px-2 py-1 rounded-md border border-gray-700 bg-[#1a1a1a]/70 text-gray-300">
+                    {key}
+                  </span>
+                  <span className="text-gray-400">{label}</span>
+                </div>
+              ))}
             </div>
 
-            <div className="mt-5 flex items-center gap-2 text-[hsl(232_10%_45%)]">
+            <div className="mt-5 flex items-center gap-2 text-gray-400">
               <MousePointer2 className="h-4 w-4" />
               <span className="text-sm font-semibold">Mouse</span>
             </div>
-            <ul className="mt-3 space-y-2 text-sm text-[hsl(232_10%_45%)]">
+            <ul className="mt-3 space-y-2 text-sm text-gray-400">
               <li>Drag card left or right to preview</li>
               <li>Release past threshold to like/dislike</li>
-              <li>Use buttons below for quick actions</li>
+              <li>Use buttons above for quick actions</li>
             </ul>
           </div>
         </aside>
@@ -207,13 +227,11 @@ const TriggerButton = ({ children, onTrigger, direction }) => (
   <button
     type="button"
     onClick={onTrigger}
-    className={`h-14 w-14 flex items-center justify-center rounded-full transition shadow-md cursor-pointer
-      ${
-        direction === "left"
-          ? "bg-red-100 hover:bg-red-200"
-          : "bg-green-100 hover:bg-green-200"
-      }
-    `}
+    className={`h-14 w-14 flex items-center justify-center rounded-full transition cursor-pointer shadow-md ${
+      direction === "left"
+        ? "bg-red-900/20 hover:bg-red-900/40 border border-red-800"
+        : "bg-green-900/20 hover:bg-green-900/40 border border-green-800"
+    }`}
   >
     {children}
   </button>
@@ -236,19 +254,15 @@ const SwipeCard = ({ user, onSwipedLeft, onSwipedRight }) => {
     };
     document.addEventListener("programmatic-swipe", handler);
     return () => document.removeEventListener("programmatic-swipe", handler);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const animateExit = async (direction = 1) => {
-    // Nudge first
     await controls.start({
       x: direction * 80,
       rotate: direction * 5,
       opacity: 1,
       transition: { duration: 0.18, ease: "easeOut" },
     });
-
-    // Then fade out
     await controls.start({
       x: direction * 120,
       scale: 0.85,
@@ -256,7 +270,6 @@ const SwipeCard = ({ user, onSwipedLeft, onSwipedRight }) => {
       rotate: direction * 10,
       transition: { duration: 0.25, ease: "easeInOut" },
     });
-
     if (direction > 0) onSwipedRight?.();
     else onSwipedLeft?.();
   };
@@ -299,18 +312,18 @@ const SwipeCard = ({ user, onSwipedLeft, onSwipedRight }) => {
         {/* Overlays */}
         <motion.div
           style={{ opacity: greenOverlay }}
-          className="pointer-events-none absolute inset-0 rounded-3xl bg-green-500/70 mix-blend-multiply z-10"
+          className="pointer-events-none absolute inset-0 rounded-3xl bg-green-500/30 mix-blend-multiply z-10"
         />
         <motion.div
           style={{ opacity: redOverlay }}
-          className="pointer-events-none absolute inset-0 rounded-3xl bg-red-500/70 mix-blend-multiply z-10"
+          className="pointer-events-none absolute inset-0 rounded-3xl bg-red-500/30 mix-blend-multiply z-10"
         />
         {/* Labels */}
         <motion.div
           style={{ opacity: likeOpacity }}
           className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
         >
-          <div className="px-6 py-3 rounded-2xl text-4xl font-extrabold tracking-wide text-white shadow-lg bg-green-600/80">
+          <div className="px-6 py-3 rounded-2xl text-4xl font-extrabold tracking-wide text-white bg-green-600/70 backdrop-blur-xl">
             LIKE
           </div>
         </motion.div>
@@ -318,7 +331,7 @@ const SwipeCard = ({ user, onSwipedLeft, onSwipedRight }) => {
           style={{ opacity: nopeOpacity }}
           className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
         >
-          <div className="px-6 py-3 rounded-2xl text-4xl font-extrabold tracking-wide text-white shadow-lg bg-red-600/80">
+          <div className="px-6 py-3 rounded-2xl text-4xl font-extrabold tracking-wide text-white bg-red-600/70 backdrop-blur-xl">
             NOPE
           </div>
         </motion.div>

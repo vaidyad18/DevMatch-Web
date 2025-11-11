@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BASE_URL } from "../lib/constants";
+import LiquidEther from "../components/LiquidEther";
 
 const Login = () => {
-  const [emailId, setEmailId] = useState("vishu@gmail.com");
-  const [password, setPassword] = useState("Vihaan@123");
+  const [emailId, setEmailId] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const etherRef = useRef(null);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -43,114 +45,148 @@ const Login = () => {
     }
   };
 
+  useEffect(() => {
+    const proxy = document.getElementById("ether-overlay");
+    if (!proxy || !etherRef.current) return;
+    const etherCanvas = etherRef.current.querySelector("canvas");
+    if (!etherCanvas) return;
+
+    const handleMove = (e) => {
+      const fakeEvent = new MouseEvent("mousemove", {
+        clientX: e.clientX,
+        clientY: e.clientY,
+      });
+      etherCanvas.dispatchEvent(fakeEvent);
+    };
+
+    proxy.addEventListener("mousemove", handleMove);
+    return () => proxy.removeEventListener("mousemove", handleMove);
+  }, []);
+
   return (
-    <div
-      className="min-h-screen grid place-items-center px-4"
-      style={{
-        background:
-          "radial-gradient(60rem 60rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
-      }}
-    >
-      <div className="w-full -mt-16 max-w-md">
-        {/* Card with even gradient border */}
-        <div
-          className="rounded-2xl shadow-2xl"
-          style={{
-            background:
-              "linear-gradient(#ffffff,#ffffff) padding-box, linear-gradient(90deg,hsl(var(--brand-start)),hsl(var(--brand-end))) border-box",
-            border: "1px solid transparent",
-          }}
-        >
-          <div className="rounded-2xl bg-white p-6 sm:p-8">
-            <div className="text-center">
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[hsl(234_12%_12%)]">
-                Welcome back
-              </h1>
-              <p className="mt-1 text-[hsl(232_10%_45%)]">Sign in to continue</p>
+    <div className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
+      {/* Liquid Ether Background */}
+      <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-auto">
+        <LiquidEther
+          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+          mouseForce={20}
+          cursorSize={100}
+          isViscous={false}
+          viscous={30}
+          iterationsViscous={32}
+          iterationsPoisson={32}
+          resolution={0.5}
+          isBounce={false}
+          autoDemo={false}
+          autoSpeed={0.5}
+          autoIntensity={2.2}
+          takeoverDuration={0.25}
+          autoResumeDelay={3000}
+          autoRampDuration={0.6}
+        />
+      </div>
+      <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
+
+      {/* Main Login Card */}
+      <div className="relative z-20 w-[90%] md:w-[1100px] min-h-[600px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col md:flex-row">
+
+        {/* Left: Form Section */}
+        <div className="flex-1 flex flex-col justify-center bg-white text-black px-8 sm:px-12 py-10">
+          <h1 className="text-3xl font-bold text-gray-900 text-center">
+            Welcome back
+          </h1>
+          <p className="text-center text-gray-500 mb-6">
+            Sign in to continue your journey
+          </p>
+
+          <form className="space-y-4" onSubmit={handleLogin} noValidate>
+            {/* Email */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-800">
+                Email
+              </label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="email"
+                  name="email"
+                  value={emailId}
+                  onChange={handleEmailChange}
+                  placeholder="you@example.com"
+                  aria-invalid={!!emailError}
+                  className={`w-full h-11 rounded-md px-10 outline-none transition
+                    bg-white text-black placeholder:text-gray-400
+                    border ${emailError ? "border-red-500" : "border-gray-300"}
+                    focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
+                />
+              </div>
+              {emailError && (
+                <p className="text-red-500 text-xs mt-1">{emailError}</p>
+              )}
             </div>
 
-            <form className="mt-6 space-y-4" onSubmit={handleLogin} noValidate>
-              {/* Email */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">
-                  Email
-                </label>
-                <div className="relative">
-                  <input
-                    type="email"
-                    name="email"
-                    value={emailId}
-                    onChange={handleEmailChange}
-                    placeholder="you@example.com"
-                    aria-invalid={!!emailError}
-                    className={`w-full h-11 rounded-md px-10 outline-none transition
-                      bg-white text-black placeholder:text-gray-400
-                      border ${emailError ? "border-red-500" : "border-gray-300"}
-                      focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]
-                    `}
-                  />
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                </div>
-                {emailError && (
-                  <p className="text-red-500 text-xs mt-1">{emailError}</p>
-                )}
+            {/* Password */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-gray-800">
+                Password
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full h-11 rounded-md px-10 pr-10 outline-none transition
+                             bg-white text-black placeholder:text-gray-400
+                             border border-gray-300 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((s) => !s)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
+            </div>
 
-              {/* Password */}
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-[hsl(234_12%_12%)]">
-                  Password
-                </label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="••••••••"
-                    className="w-full h-11 rounded-md px-10 pr-10 outline-none transition
-                               bg-white text-black placeholder:text-gray-400
-                               border border-gray-300 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
-                  />
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((s) => !s)}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </button>
-                </div>
-              </div>
+            {!!error && <div className="text-red-500 text-sm">{error}</div>}
 
-              {/* Server error */}
-              {!!error && <div className="text-red-500 text-sm">{error}</div>}
+            {/* Submit */}
+            <button
+              type="submit"
+              disabled={!!emailError}
+              className="mt-4 inline-flex w-full items-center justify-center gap-2
+                         rounded-md h-11 text-white font-medium
+                         bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
+                         hover:opacity-95 disabled:opacity-60"
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </button>
+          </form>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={!!emailError}
-                className="mt-2 inline-flex w-full items-center justify-center gap-2
-                           rounded-md h-11 text-white font-medium
-                           bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
-                           hover:opacity-95 disabled:opacity-60"
-              >
-                <LogIn className="h-4 w-4" />
-                Login
-              </button>
-            </form>
+          <p className="mt-6 text-center text-sm text-gray-600">
+            New here?{" "}
+            <Link
+              to="/signup"
+              className="font-medium text-[hsl(var(--brand-end))] hover:opacity-90"
+            >
+              Create an account
+            </Link>
+          </p>
+        </div>
 
-            <p className="mt-6 text-center text-sm text-[hsl(232_10%_45%)]">
-              New here?{" "}
-              <Link
-                to="/signup"
-                className="font-medium text-[hsl(var(--brand-end))] hover:opacity-90"
-              >
-                Create an account
-              </Link>
-            </p>
-          </div>
+        <div className="bg-gradient-to-br from-black via-[hsl(var(--brand-start)/0.4)] to-[hsl(var(--brand-end)/0.4)] md:w-7/12 w-full flex flex-col justify-center items-center text-center p-10">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
+            Welcome to DevMatch
+          </h1>
+          <p className="text-gray-300 max-w-sm text-md">
+            Connect, collaborate, and build with developers who share your vision.
+          </p>
         </div>
       </div>
     </div>

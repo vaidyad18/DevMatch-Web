@@ -1,7 +1,6 @@
 import React from "react";
 import {
   User as UserIcon,
-  Calendar,
   Briefcase,
   Layers,
   Code2,
@@ -10,7 +9,6 @@ import {
   Globe,
   Mars,
   Venus,
-  Circle,
   VenusAndMars,
 } from "lucide-react";
 
@@ -38,15 +36,10 @@ const UserCard = ({ user }) => {
 
   return (
     <div
-      className="w-[400px] mx-auto rounded-3xl overflow-hidden shadow-lg bg-white hover:shadow-2xl transition flex flex-col select-none"
-      style={{
-        background:
-          "linear-gradient(#ffffff,#ffffff) padding-box, linear-gradient(90deg,hsl(var(--brand-start)),hsl(var(--brand-end))) border-box",
-        border: "1px solid transparent",
-      }}
+      className="w-[400px] mx-auto rounded-3xl overflow-hidden shadow-lg bg-[#0b0b0b]/90 backdrop-blur-3xl  border border-gray-800 hover:shadow-2xl transition flex flex-col select-none"
     >
       {/* Profile photo with gradient overlay */}
-      <div className="w-full h-96 bg-[hsl(220_13%_96%)] relative">
+      <div className="w-full h-96 bg-[#111] relative">
         {photoURL ? (
           <>
             <img
@@ -54,10 +47,10 @@ const UserCard = ({ user }) => {
               alt={name}
               className="h-full w-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
             {/* Name, Age, Gender overlay */}
-            <div className="absolute bottom-4 left-6 text-white">
+            <div className="absolute bottom-4 left-6 text-white drop-shadow-lg">
               <h2 className="text-2xl font-bold">
                 {name}
                 {age && `, ${age}`}
@@ -71,29 +64,29 @@ const UserCard = ({ user }) => {
             </div>
           </>
         ) : (
-          <div className="h-full w-full flex items-center justify-center">
-            <UserIcon className="h-12 w-12 text-[hsl(232_10%_45%)]" />
+          <div className="h-full w-full flex items-center justify-center bg-[#111]">
+            <UserIcon className="h-12 w-12 text-gray-500" />
           </div>
         )}
       </div>
 
       {/* Body */}
-      <div className="p-6 -mt-2 flex-1 flex flex-col">
+      <div className="p-6 -mt-2 flex-1 flex flex-col text-gray-300">
         {/* Description */}
         {description && (
-          <p className="text-[17px] leading-6 font-semibold text-[hsl(232_10%_35%)]">
+          <p className="text-[17px] leading-6 font-semibold text-gray-200">
             {description}
           </p>
         )}
 
         {/* Role & Experience pills */}
         <div className="mt-3 flex flex-wrap gap-2">
-          <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(220_13%_90%)] bg-[hsl(220_13%_98%)] px-3 py-1 text-xs font-medium text-[hsl(232_10%_40%)]">
-            <Briefcase className="h-3.5 w-3.5" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-700 bg-[#1a1a1a]/70 px-3 py-1 text-xs font-medium text-gray-300">
+            <Briefcase className="h-3.5 w-3.5 text-[hsl(var(--brand-end))]" />
             {role}
           </span>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(220_13%_90%)] bg-[hsl(220_13%_98%)] px-3 py-1 text-xs font-medium text-[hsl(232_10%_40%)]">
-            <Layers className="h-3.5 w-3.5" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-gray-700 bg-[#1a1a1a]/70 px-3 py-1 text-xs font-medium text-gray-300">
+            <Layers className="h-3.5 w-3.5 text-[hsl(var(--brand-start))]" />
             {experience}
           </span>
         </div>
@@ -101,9 +94,9 @@ const UserCard = ({ user }) => {
         {/* Skills */}
         {skills?.length > 0 && (
           <div className="mt-5">
-            <div className="flex items-center gap-2 mb-2 text-[hsl(232_10%_45%)]">
-              <Code2 className="h-4 w-4" />
-              <span className="text-xs font-semibold tracking-wide">
+            <div className="flex items-center gap-2 mb-2 text-gray-400">
+              <Code2 className="h-4 w-4 text-[hsl(var(--brand-end))]" />
+              <span className="text-xs font-semibold tracking-wide uppercase">
                 Skills
               </span>
             </div>
@@ -111,13 +104,13 @@ const UserCard = ({ user }) => {
               {skills.slice(0, 6).map((s, i) => (
                 <span
                   key={`${s}-${i}`}
-                  className="text-xs px-2 py-1 rounded-lg border border-[hsl(220_13%_90%)] bg-[hsl(220_13%_98%)] text-[hsl(232_10%_45%)]"
+                  className="text-xs px-2 py-1 rounded-lg border border-gray-700 bg-[#1a1a1a]/70 text-gray-300"
                 >
                   {s}
                 </span>
               ))}
               {skills.length > 6 && (
-                <span className="text-xs px-2 py-1 rounded-lg border border-[hsl(220_13%_90%)] bg-[hsl(220_13%_98%)] text-[hsl(232_10%_45%)]">
+                <span className="text-xs px-2 py-1 rounded-lg border border-gray-700 bg-[#1a1a1a]/70 text-gray-400">
                   +{skills.length - 6} more
                 </span>
               )}
@@ -134,9 +127,9 @@ const UserCard = ({ user }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-blue-100 hover:text-white"
+                className="h-10 w-10 rounded-full grid place-items-center bg-[#0b0b0b]/70 border border-gray-700 hover:bg-[#0A66C2]/20 transition"
               >
-                <Linkedin className="h-5 w-5 text-[#0A66C2] group-hover:text-white" />
+                <Linkedin className="h-5 w-5 text-[#0A66C2]" />
               </a>
             )}
             {safeUrl(github) && (
@@ -145,9 +138,9 @@ const UserCard = ({ user }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-gray-300 hover:text-white"
+                className="h-10 w-10 rounded-full grid place-items-center bg-[#0b0b0b]/70 border border-gray-700 hover:bg-gray-700/40 transition"
               >
-                <Github className="h-5 w-5 text-black group-hover:text-white" />
+                <Github className="h-5 w-5 text-gray-200" />
               </a>
             )}
             {safeUrl(website) && (
@@ -156,9 +149,9 @@ const UserCard = ({ user }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Website"
-                className="h-10 w-10 rounded-full grid place-items-center bg-white shadow border border-gray-200 transition hover:bg-green-100 hover:text-white"
+                className="h-10 w-10 rounded-full grid place-items-center bg-[#0b0b0b]/70 border border-gray-700 hover:bg-green-600/20 transition"
               >
-                <Globe className="h-5 w-5 text-green-600 group-hover:text-white" />
+                <Globe className="h-5 w-5 text-green-400" />
               </a>
             )}
           </div>
