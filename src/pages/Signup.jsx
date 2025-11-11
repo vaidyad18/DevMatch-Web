@@ -25,7 +25,8 @@ const Signup = () => {
 
     if (!firstName.trim()) e.firstName = "First name is required";
     if (!lastName.trim()) e.lastName = "Last name is required";
-    if (!validateEmail(emailId)) e.emailId = "Please enter a valid email address";
+    if (!validateEmail(emailId))
+      e.emailId = "Please enter a valid email address";
     if (!passwordRegex.test(password))
       e.password =
         "Password must be at least 8 characters and include uppercase, lowercase, number, and symbol";
@@ -73,10 +74,8 @@ const Signup = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden">
-      <div
-        ref={etherRef}
-        className="absolute inset-0 z-0 pointer-events-auto"
-      >
+      {/* Background animation */}
+      <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-auto">
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
           mouseForce={20}
@@ -101,73 +100,79 @@ const Signup = () => {
       />
 
       <div className="relative z-20 w-[90%] md:w-[1100px] min-h-[600px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col md:flex-row">
-
-
+        {/* Left side illustration */}
         <div className="bg-gradient-to-br from-black via-[hsl(var(--brand-start)/0.4)] to-[hsl(var(--brand-end)/0.4)] md:w-7/12 w-full flex flex-col justify-center items-center text-center p-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-            Welcome back!
+            Join DevMatch
           </h1>
           <p className="text-gray-300 max-w-sm text-md">
-            Sign up to access your existing account and continue your journey
-            with us.
+            Collaborate, connect, and grow with developers worldwide.
           </p>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center bg-white text-black px-8 sm:px-12 py-10">
+        {/* Right side form */}
+        <div className="flex-1 flex flex-col justify-center bg-white text-black px-8 sm:px-12 py-8">
           <h1 className="text-3xl font-bold text-gray-900 text-center">
             Create your account
           </h1>
           <p className="text-center text-gray-500 mb-6">
-            Join DevMatch to find collaborators
+            Sign up and start building together
           </p>
 
           <form className="space-y-4" onSubmit={onSubmit} noValidate>
             {/* First name */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-800">
-                First name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="John"
-                  className={`w-full h-11 rounded-md px-10 outline-none transition
+            <div className="flex gap-4 justify-center items-center">
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-800">
+                  First name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    placeholder="John"
+                    className={`w-full h-11 rounded-md px-10 outline-none transition
                     bg-white text-black placeholder:text-gray-400
-                    border ${errors.firstName ? "border-red-500" : "border-gray-300"}
+                    border ${
+                      errors.firstName ? "border-red-500" : "border-gray-300"
+                    }
                     focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
-                />
+                  />
+                </div>
+                {errors.firstName && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.firstName}
+                  </p>
+                )}
               </div>
-              {errors.firstName && (
-                <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>
-              )}
-            </div>
 
-            {/* Last name */}
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-800">
-                Last name
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Harley"
-                  className={`w-full h-11 rounded-md px-10 outline-none transition
+              {/* Last name */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-gray-800">
+                  Last name
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                    placeholder="Doe"
+                    className={`w-full h-11 rounded-md px-10 outline-none transition
                     bg-white text-black placeholder:text-gray-400
-                    border ${errors.lastName ? "border-red-500" : "border-gray-300"}
+                    border ${
+                      errors.lastName ? "border-red-500" : "border-gray-300"
+                    }
                     focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
-                />
+                  />
+                </div>
+                {errors.lastName && (
+                  <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
+                )}
               </div>
-              {errors.lastName && (
-                <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>
-              )}
             </div>
-
             {/* Email */}
             <div>
               <label className="mb-1.5 block text-sm font-medium text-gray-800">
@@ -182,7 +187,9 @@ const Signup = () => {
                   placeholder="you@example.com"
                   className={`w-full h-11 rounded-md px-10 outline-none transition
                     bg-white text-black placeholder:text-gray-400
-                    border ${errors.emailId ? "border-red-500" : "border-gray-300"}
+                    border ${
+                      errors.emailId ? "border-red-500" : "border-gray-300"
+                    }
                     focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
                 />
               </div>
@@ -205,7 +212,9 @@ const Signup = () => {
                   placeholder="••••••••"
                   className={`w-full h-11 rounded-md px-10 pr-10 outline-none transition
                     bg-white text-black placeholder:text-gray-400
-                    border ${errors.password ? "border-red-500" : "border-gray-300"}
+                    border ${
+                      errors.password ? "border-red-500" : "border-gray-300"
+                    }
                     focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
                 />
                 <button
@@ -213,7 +222,11 @@ const Signup = () => {
                   onClick={() => setShowPassword((s) => !s)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
               {errors.password && (
@@ -236,6 +249,30 @@ const Signup = () => {
               Create account
             </button>
           </form>
+
+          <div className="mt-6 flex flex-col items-center w-full">
+            <div className="flex items-center w-full">
+              <div className="flex-1 h-[1px] bg-gray-300"></div>
+              <p className="text-gray-500 text-sm mx-3">or</p>
+              <div className="flex-1 h-[1px] bg-gray-300"></div>
+            </div>
+
+            <button
+              onClick={() =>
+                (window.location.href = "http://localhost:7777/api/auth/google")
+              }
+              className="mt-5 inline-flex items-center justify-center gap-3 w-full h-11
+               bg-white border border-gray-300 text-gray-700 font-medium rounded-md
+               shadow-sm hover:bg-gray-100 transition-all duration-150 ease-in-out"
+            >
+              <img
+                src="https://www.svgrepo.com/show/355037/google.svg"
+                alt="Google logo"
+                className="w-5 h-5"
+              />
+              Continue with Google
+            </button>
+          </div>
 
           <p className="mt-6 text-center text-sm text-gray-600">
             Already have an account?{" "}

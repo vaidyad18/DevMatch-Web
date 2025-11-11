@@ -18,6 +18,8 @@ import MeetDev from "./pages/MeetDev.jsx";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import Memberships from "./pages/Memberships.jsx";
 import Chat from "./pages/Chat.jsx";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import AuthSuccess from "./pages/AuthSuccess.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -75,15 +77,18 @@ const appRouter = createBrowserRouter([
       {
         path: "chat/:targetUserId",
         element: <Chat />,
-      }
+      },
+      { path: "auth/success", element: <AuthSuccess /> },
     ],
   },
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <ThemeProvider>
-    <Provider store={appStore}>
-      <RouterProvider router={appRouter} />
-    </Provider>
-  </ThemeProvider>
+  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+    <ThemeProvider>
+      <Provider store={appStore}>
+        <RouterProvider router={appRouter} />
+      </Provider>
+    </ThemeProvider>
+  </GoogleOAuthProvider>
 );

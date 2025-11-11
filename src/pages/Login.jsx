@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BASE_URL } from "../lib/constants";
 import LiquidEther from "../components/LiquidEther";
+import { GoogleLogin } from "@react-oauth/google"; // 👇
 
 const Login = () => {
   const [emailId, setEmailId] = useState("");
@@ -23,7 +24,9 @@ const Login = () => {
   const handleEmailChange = (e) => {
     const value = e.target.value;
     setEmailId(value);
-    setEmailError(validateEmail(value) ? "" : "Please enter a valid email address");
+    setEmailError(
+      validateEmail(value) ? "" : "Please enter a valid email address"
+    );
   };
 
   const handleLogin = async (e) => {
@@ -41,7 +44,9 @@ const Login = () => {
       dispatch(addUser(res.data));
       navigate("/");
     } catch (err) {
-      setError(err?.response?.data || "Something went wrong. Please try again.");
+      setError(
+        err?.response?.data || "Something went wrong. Please try again."
+      );
     }
   };
 
@@ -85,11 +90,13 @@ const Login = () => {
           autoRampDuration={0.6}
         />
       </div>
-      <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
+      <div
+        id="ether-overlay"
+        className="absolute inset-0 z-10 pointer-events-none"
+      />
 
       {/* Main Login Card */}
       <div className="relative z-20 w-[90%] md:w-[1100px] min-h-[600px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col md:flex-row">
-
         {/* Left: Form Section */}
         <div className="flex-1 flex flex-col justify-center bg-white text-black px-8 sm:px-12 py-10">
           <h1 className="text-3xl font-bold text-gray-900 text-center">
@@ -148,7 +155,11 @@ const Login = () => {
                   aria-label={showPassword ? "Hide password" : "Show password"}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? (
+                    <EyeOff className="h-4 w-4" />
+                  ) : (
+                    <Eye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>
@@ -169,6 +180,32 @@ const Login = () => {
             </button>
           </form>
 
+          <div className="mt-6 flex flex-col items-center w-full">
+            {/* Divider with 'or' */}
+            <div className="flex items-center w-full">
+              <div className="flex-1 h-[1px] bg-gray-300"></div>
+              <p className="text-gray-500 text-sm mx-3">or</p>
+              <div className="flex-1 h-[1px] bg-gray-300"></div>
+            </div>
+
+            {/* Google Button */}
+            <button
+              onClick={() =>
+                (window.location.href = "http://localhost:7777/api/auth/google")
+              }
+              className="mt-5 inline-flex items-center justify-center gap-3 w-full h-11
+               bg-white border border-gray-300 text-gray-700 font-medium rounded-md
+               shadow-sm hover:bg-gray-100 transition-all duration-150 ease-in-out"
+            >
+              <img
+                src="https://www.svgrepo.com/show/355037/google.svg"
+                alt="Google logo"
+                className="w-5 h-5"
+              />
+              Continue with Google
+            </button>
+          </div>
+
           <p className="mt-6 text-center text-sm text-gray-600">
             New here?{" "}
             <Link
@@ -180,12 +217,14 @@ const Login = () => {
           </p>
         </div>
 
+        {/* Right Side: Illustration */}
         <div className="bg-gradient-to-br from-black via-[hsl(var(--brand-start)/0.4)] to-[hsl(var(--brand-end)/0.4)] md:w-7/12 w-full flex flex-col justify-center items-center text-center p-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
             Welcome to DevMatch
           </h1>
           <p className="text-gray-300 max-w-sm text-md">
-            Connect, collaborate, and build with developers who share your vision.
+            Connect, collaborate, and build with developers who share your
+            vision.
           </p>
         </div>
       </div>

@@ -298,7 +298,7 @@ const EditProfile = ({ user }) => {
                   <input
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="First name"
+                    placeholder="Eg. John"
                     className={`w-full h-11 rounded-md px-10 border ${
                       errors.firstName ? "border-red-400" : "border-gray-300"
                     } focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]`}
@@ -321,7 +321,7 @@ const EditProfile = ({ user }) => {
                   <input
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Last name"
+                    placeholder="Eg. Harley"
                     className="w-full h-11 rounded-md px-10 border border-gray-300 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                   />
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -357,7 +357,7 @@ const EditProfile = ({ user }) => {
                     <select
                       value={gender}
                       onChange={(e) => setGender(e.target.value)}
-                      className="w-full h-11 rounded-md border border-gray-300 pl-10 pr-10 outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
+                      className="w-full h-11 rounded-md border bg-[#0d0d0d]/70 text-gray-200 pl-10 pr-10 appearance-none focus:ring-2 focus:ring-[hsl(var(--brand-end))] outline-none"
                     >
                       <option value="" disabled>
                         Choose gender
@@ -366,8 +366,9 @@ const EditProfile = ({ user }) => {
                         <option key={g}>{g}</option>
                       ))}
                     </select>
-                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+
+                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
 
@@ -396,7 +397,7 @@ const EditProfile = ({ user }) => {
                     <input
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
-                      placeholder="9876543210"
+                      placeholder="Eg. 9876543210"
                       className="w-full h-11 rounded-md border border-gray-300 pl-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                     />
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -476,7 +477,7 @@ const EditProfile = ({ user }) => {
                   <input
                     value={linkedin}
                     onChange={(e) => setLinkedin(e.target.value)}
-                    placeholder="https://www.linkedin.com/in/username"
+                    placeholder="Eg. https://www.linkedin.com/in/username"
                     className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                   />
                   <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -492,7 +493,7 @@ const EditProfile = ({ user }) => {
                   <input
                     value={githubURL}
                     onChange={(e) => setGithubURL(e.target.value)}
-                    placeholder="https://github.com/username"
+                    placeholder="Eg. https://github.com/username"
                     className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                   />
                   <Github className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -508,7 +509,7 @@ const EditProfile = ({ user }) => {
                   <input
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
-                    placeholder="https://yourdomain.com"
+                    placeholder="Eg. https://yourdomain.com"
                     className="w-full h-11 rounded-md border border-gray-300 px-10 focus-visible:ring-2 focus-visible:ring-[hsl(var(--brand-end))]"
                   />
                   <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
