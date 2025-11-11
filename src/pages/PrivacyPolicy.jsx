@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import LiquidEther from "../components/LiquidEther";
-import Backbutton from "../components/Backbutton";
+import Backbutton from "../components/BackButton";
 
 const PrivacyPolicy = () => {
   const etherRef = useRef(null);
