@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from "react";
-import Backbutton from "../components/Backbutton";
+import Backbutton from "../components/BackButton";
 import LiquidEther from "../components/LiquidEther";
 
 const TermsConditions = () => {
