@@ -35,18 +35,22 @@ const UserCard = ({ user }) => {
   const safeUrl = (u) => (u && /^https?:\/\//i.test(u) ? u : undefined);
 
   return (
-    <div
-      className="w-[400px] mx-auto rounded-3xl overflow-hidden shadow-lg bg-[#0b0b0b]/90 backdrop-blur-3xl  border border-gray-800 hover:shadow-2xl transition flex flex-col select-none"
-    >
+    <div className="w-[400px] mx-auto rounded-3xl overflow-hidden shadow-lg bg-[#0b0b0b]/90 backdrop-blur-3xl  border border-gray-800 hover:shadow-2xl transition flex flex-col select-none">
       {/* Profile photo with gradient overlay */}
       <div className="w-full h-96 bg-[#111] relative">
         {photoURL ? (
           <>
             <img
-              src={photoURL}
-              alt={name}
-              className="h-full w-full object-cover"
+            className="w-full h-full object-cover"
+              src={
+                typeof user.photoURL === "string"
+                  ? user.photoURL
+                  : user.photoURL
+                  ? URL.createObjectURL(user.photoURL)
+                  : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIf4R5qPKHPNMyAqV-FjS_OTBB8pfUV29Phg&s"
+              }
             />
+
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
             {/* Name, Age, Gender overlay */}
