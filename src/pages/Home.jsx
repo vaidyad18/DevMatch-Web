@@ -86,7 +86,6 @@ export default function Home() {
           pointerEvents: "auto",
         }}
       >
-
         <LiquidEther
           colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
           mouseForce={20}
@@ -125,7 +124,7 @@ export default function Home() {
       >
         <section
           id="home"
-          className="w-full pb-24 md:pb-32 pt-44 px-6 lg:px-10 text-center"
+          className="w-full pb-24 md:pb-32 pt-40 px-6 lg:px-10 text-center"
         >
           <div className="max-w-7xl mx-auto flex flex-col items-center">
             <motion.div
@@ -137,7 +136,6 @@ export default function Home() {
                 <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]" />
                 DevMatch - Connect. Code. Collaborate.
               </span>
-
               <h1 className="mt-4 text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight">
                 Meet your next
                 <GradientText
@@ -155,20 +153,17 @@ export default function Home() {
                   <span className="font-bold">collaborator</span>
                 </GradientText>
               </h1>
-
               <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">
                 Swipe to discover talented developers, collaborate on projects,
                 and build meaningful professional relationships in the tech
                 world.
               </p>
-
               <div className="mt-8 flex flex-wrap gap-3 justify-center">
                 <Link
                   to={user ? "/feed" : "/login"}
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-11 px-5  text-white bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-90 backdrop-blur-sm transition"
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-11 px-5 text-white bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-90 backdrop-blur-sm transition"
                 >
-                  Start Networking
-                  <ArrowRight className="h-4 w-4" />
+                  Start Networking <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   to="/meet-dev"
@@ -186,9 +181,10 @@ export default function Home() {
                   },
                   {
                     icon: <GitFork className="h-4 w-4" />,
-                    label: "Demo matches",
-                    value: "3",
+                    label: "Dev mode",
+                    value: "On",
                   },
+
                   {
                     icon: <Code2 className="h-4 w-4" />,
                     label: "Version",

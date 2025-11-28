@@ -249,7 +249,6 @@ const Chat = () => {
                     <h2 className="text-sm sm:text-base font-semibold text-gray-100 truncate">
                       {peer ? `${peer.firstName ?? ""} ${peer.lastName ?? ""}`.trim() : "Developer"}
                     </h2>
-                    <p className="text-xs text-gray-500">Online</p>
                   </div>
                 </>
               ) : (

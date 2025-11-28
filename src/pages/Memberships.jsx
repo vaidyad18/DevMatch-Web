@@ -1,44 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CheckCircle2, Star, Crown } from "lucide-react";
+import { CheckCircle2, Star, Crown, Info } from "lucide-react";
 import { motion } from "framer-motion";
+import LiquidEther from "../components/LiquidEther";
 import { BASE_URL } from "../lib/constants";
 
 const plans = [
   {
     name: "Current Plan",
-    tagline: "Your active base membership plan",
+    tagline: "Base membership plan",
     price: "Free",
-    color: "from-gray-200 via-gray-300 to-gray-400",
-    glow: "shadow-[0_0_25px_rgba(156,163,175,0.35)]",
     features: [
-      "Access to DevMatch feed",
-      "Basic collaboration tools",
-      "Community support",
-      "3 project uploads/month",
-      "Email support",
+      "DevMatch feed",
+      "Live chat",
+      "Unlimited messaging",
+      "Unlimited swipes",
+      "Meet the developer of DevMatch",
+    ],
+    type: "basic",
+    highlightLevel: 1,
+  },
+  {
+    name: "Silver Membership",
+    tagline: "Same features as all other plans",
+    price: "₹149/month",
+    features: [
+      "DevMatch feed",
+      "Live chat",
+      "Unlimited messaging",
+      "Unlimited swipes",
+      "Meet the developer of DevMatch",
     ],
     type: "silver",
+    highlightLevel: 2,
   },
   {
     name: "Elite Membership",
-    tagline: "For professionals aiming to stand out",
-    price: "₹999/month",
-    color: "from-[#FFF9E6] via-[#FFE9A3] to-[#FFD75E]", // light gold bg
-    glow: "shadow-[0_0_35px_rgba(255,223,120,0.5)]",
+    tagline: "Same features as all other plans",
+    price: "₹249/month",
     features: [
-      "Everything in Current Plan",
-      "Unlimited project uploads",
-      "Priority support (24×7)",
-      "Advanced analytics dashboard",
-      "Exclusive developer events",
-      "Early access to beta features",
-      "AI-powered project suggestions",
+      "DevMatch feed",
+      "Live chat",
+      "Unlimited messaging",
+      "Unlimited swipes",
+      "Meet the developer of DevMatch",
     ],
     type: "gold",
-    highlighted: true,
+    highlightLevel: 3,
+    popular: true,
   },
 ];
 
@@ -46,6 +57,7 @@ const Memberships = () => {
   const [isUserPremium, setIsUserPremium] = useState(false);
   const user = useSelector((store) => store.user);
   const navigate = useNavigate();
+  const etherRef = useRef(null);
 
   useEffect(() => {
     verifyUserPremium();
@@ -72,30 +84,25 @@ const Memberships = () => {
         { withCredentials: true }
       );
 
-      const { amount, currency, orderId, notes, keyId } = orderRes.data;
+      const { orderId, notes, keyId } = orderRes.data;
 
       const options = {
         key: keyId,
-        amount,
-        currency,
+        amount: orderRes.data.amount,
+        currency: orderRes.data.currency,
         name: "DevMatch",
         description: "Membership Purchase",
-        image: "https://dndesigns.co.in/wp-content/uploads/2024/09/5.png",
         order_id: orderId,
         prefill: {
           name: `${notes?.firstName || ""} ${notes?.lastName || ""}`.trim(),
           email: notes?.emailId || "",
         },
-        theme: { color: "#6D28D9" },
+        theme: { color: "#7C3AED" },
         handler: async function (response) {
           try {
             const verifyRes = await axios.post(
               `${BASE_URL}/payment/verify`,
-              {
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_signature: response.razorpay_signature,
-              },
+              response,
               { withCredentials: true }
             );
 
@@ -109,143 +116,130 @@ const Memberships = () => {
         },
       };
 
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      new window.Razorpay(options).open();
     } catch (err) {
       console.error(err);
       alert("Could not start payment");
     }
   };
 
-  if (isUserPremium)
+  if (isUserPremium) {
     return (
-      <div className="min-h-screen grid place-items-center text-center">
-        <div>
-          <Crown className="mx-auto h-12 w-12 text-yellow-400 mb-3" />
-          <h2 className="text-3xl font-bold text-foreground">
-            You are already an Elite Member!
-          </h2>
-          <p className="text-muted-foreground mt-2">
-            Enjoy all exclusive features and perks ✨
-          </p>
-        </div>
+      <div className="min-h-screen grid place-items-center bg-black text-center text-white">
+        <Crown className="mx-auto h-12 w-12 text-yellow-400 mb-4" />
+        <h2 className="text-3xl font-bold">You're already a Member!</h2>
+        <p className="text-gray-400 mt-2">
+          Thanks for testing Razorpay integration ✨
+        </p>
       </div>
     );
+  }
 
   return (
-    <div
-      className="relative min-h-screen py-10 px-6 overflow-hidden"
-      style={{
-        background:
-          "radial-gradient(70rem 70rem at 10% -10%, hsl(var(--brand-start)/.15), transparent), radial-gradient(60rem 60rem at 90% 110%, hsl(var(--brand-end)/.15), transparent)",
-      }}
-    >
-      {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7 }}
-        className="text-center max-w-3xl mx-auto"
-      >
-        <h1 className="text-4xl md:text-5xl font-extrabold text-foreground leading-tight">
-          Upgrade to{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]">
-            Elite Membership
-          </span>
-        </h1>
-        <p className="mt-4 text-md text-muted-foreground">
-          Unlock advanced tools, analytics, and collaboration opportunities.
-        </p>
-      </motion.div>
+    <div className="relative min-h-screen bg-black text-white overflow-hidden flex items-start pt-28 pb-20">
+      {/* Background */}
+      <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-none">
+        <LiquidEther
+          colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+          cursorSize={120}
+          mouseForce={20}
+          iterationsViscous={32}
+          iterationsPoisson={32}
+          resolution={0.5}
+        />
+      </div>
 
-      {/* Pricing Cards */}
-      <div className="mt-16 mb-10 grid sm:grid-cols-2 gap-10 max-w-6xl mx-auto relative z-10">
-        {plans.map((plan, i) => (
-          <motion.div
-            key={plan.name}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.2, duration: 0.6 }}
-            className={`relative rounded-3xl border border-border p-8 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] flex flex-col justify-between ${
-              plan.highlighted
-                ? `bg-gradient-to-br ${plan.color} border-none ${plan.glow}`
-                : "bg-white"
-            }`}
-          >
-            {/* Popular Tag */}
-            {plan.highlighted && (
-              <div className="absolute top-0 right-0 bg-amber-300 text-black text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-3xl">
-                MOST POPULAR
-              </div>
-            )}
+      <div className="relative mt-5 z-20 w-full flex flex-col items-center px-6">
+        {/* Hero */}
+        <motion.h1
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl font-extrabold text-center"
+        >
+          Choose Your Membership
+        </motion.h1>
 
-            <div>
-              <div className="flex items-center gap-3 mb-3">
-                {plan.highlighted ? (
-                  <Crown className="h-6 w-6 text-yellow-700" />
+        {/* 🔥 NOTICE ABOUT TEST MODE */}
+        <div className="mt-6 flex items-center gap-3 text-center bg-white/5 px-5 py-3 rounded-xl border border-white/10 backdrop-blur-md">
+          <Info className="h-5 w-5 text-blue-400" />
+          <p className="text-gray-300 text-sm">
+            All membership plans currently offer the same features. This setup
+            is only for testing Razorpay integration in development mode.
+          </p>
+        </div>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-4 text-gray-300 max-w-2xl text-center"
+        >
+          Pick any plan to test the payment flow.
+        </motion.p>
+
+        {/* 3-column layout */}
+        <div className="grid md:grid-cols-3 gap-10 max-w-6xl w-full mt-14">
+          {plans.map((plan, i) => (
+            <motion.div
+              key={plan.name}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.15 }}
+              className={`relative rounded-3xl p-8 bg-[#0d0d0d] border border-white/10 
+                hover:scale-[1.03] hover:border-white/20 transition-all duration-300 flex flex-col
+                ${
+                  plan.highlightLevel === 3
+                    ? "shadow-[0_0_45px_rgba(255,215,100,0.3)]"
+                    : plan.highlightLevel === 2
+                    ? "shadow-[0_0_25px_rgba(160,160,255,0.15)]"
+                    : "shadow-[0_0_15px_rgba(255,255,255,0.05)]"
+                }`}
+            >
+              {plan.popular && (
+                <div className="absolute top-0 right-0 bg-yellow-400 text-black text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-3xl">
+                  MOST POPULAR
+                </div>
+              )}
+
+              <div className="flex items-center gap-3 mb-4">
+                {plan.highlightLevel === 3 ? (
+                  <Crown className="h-7 w-7 text-yellow-400" />
+                ) : plan.highlightLevel === 2 ? (
+                  <Star className="h-7 w-7 text-blue-300" />
                 ) : (
-                  <Star className="h-6 w-6 text-[hsl(var(--brand-start))]" />
+                  <Star className="h-7 w-7 text-gray-400" />
                 )}
-                <h3
-                  className={`text-2xl font-bold ${
-                    plan.highlighted ? "text-yellow-800" : "text-foreground"
-                  }`}
-                >
-                  {plan.name}
-                </h3>
+                <h3 className="text-2xl font-bold">{plan.name}</h3>
               </div>
 
-              <p
-                className={`text-sm ${
-                  plan.highlighted ? "text-yellow-900/80" : "text-muted-foreground"
-                }`}
-              >
-                {plan.tagline}
-              </p>
+              <p className="text-gray-400">{plan.tagline}</p>
 
-              <p
-                className={`mt-5 text-4xl font-extrabold ${
-                  plan.highlighted ? "text-yellow-900" : "text-foreground"
-                }`}
-              >
-                {plan.price}
-              </p>
+              <p className="text-4xl font-extrabold mt-6">{plan.price}</p>
 
-              <ul className="mt-6 space-y-3">
+              <ul className="mt-8 space-y-4">
                 {plan.features.map((f, idx) => (
-                  <li
-                    key={idx}
-                    className={`flex items-start gap-2 ${
-                      plan.highlighted ? "text-yellow-900" : "text-foreground"
-                    }`}
-                  >
-                    <CheckCircle2
-                      className={`h-5 w-5 flex-shrink-0 ${
-                        plan.highlighted
-                          ? "text-yellow-600"
-                          : "text-[hsl(var(--brand-end))]"
-                      }`}
-                    />
-                    <span className="text-sm">{f}</span>
+                  <li key={idx} className="flex items-center gap-2">
+                    <CheckCircle2 className="h-5 w-5 text-green-400" />
+                    <span className="text-gray-300 text-sm">{f}</span>
                   </li>
                 ))}
               </ul>
-            </div>
 
-            {/* Buttons */}
-            <button
-              onClick={() => handleBuy(plan.type)}
-              disabled={plan.name === "Current Plan"}
-              className={`mt-10 w-full py-3.5 rounded-xl font-semibold text-white transition ${
-                plan.highlighted
-                  ? "bg-gradient-to-r from-amber-700 via-yellow-700 to-amber-600 hover:opacity-90 shadow-[0_0_25px_rgba(255,190,70,0.5)]"
-                  : "bg-gradient-to-r from-gray-400 to-gray-500 hover:opacity-90"
-              } ${plan.name === "Current Plan" ? "opacity-70 cursor-not-allowed" : ""}`}
-            >
-              {plan.name === "Current Plan" ? "Activated" : `Get ${plan.name}`}
-            </button>
-          </motion.div>
-        ))}
+              <button
+                onClick={() => handleBuy(plan.type)}
+                className={`mt-5 w-full py-3.5 rounded-xl font-semibold text-white transition
+                  ${
+                    plan.highlightLevel === 3
+                      ? "bg-gradient-to-r from-yellow-600 to-yellow-500"
+                      : plan.highlightLevel === 2
+                      ? "bg-gradient-to-r from-blue-600 to-blue-700"
+                      : "bg-gradient-to-r from-gray-700 to-gray-800"
+                  }`}
+              >
+                Get {plan.name}
+              </button>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );

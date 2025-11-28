@@ -53,7 +53,6 @@ const Feed = () => {
     if (!feed || feed.length === 0) fetchFeed();
   }, []);
 
-  // Liquid Ether movement setup
   useEffect(() => {
     const proxy = document.getElementById("ether-overlay");
     if (!proxy || !etherRef.current) return;
@@ -165,7 +164,7 @@ const Feed = () => {
             }}
           />
 
-          <div className="flex -mb-12 -mt-2 items-center gap-6">
+          <div className="flex -mb-12 mt-4 items-center gap-6">
             <TriggerButton
               direction="left"
               onTrigger={() => dispatchSwipe("left")}
@@ -183,7 +182,7 @@ const Feed = () => {
         </div>
 
         {/* Sidebar (Shortcuts) */}
-        <aside className="hidden absolute right-0 top-40 lg:block w-[320px]">
+        <aside className="hidden absolute -right-10 top-50 lg:block w-[320px]">
           <div className="rounded-2xl border border-gray-800 bg-[#0d0d0d]/70 backdrop-blur-xl p-5 shadow-lg">
             <div className="flex items-center gap-2 text-gray-400">
               <Keyboard className="h-4 w-4" />

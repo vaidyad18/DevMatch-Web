@@ -78,7 +78,7 @@ const MeetDev = () => {
             <p className="text-gray-300 text-base leading-relaxed">
               I'm a full-stack developer and the creator of{" "}
               <strong className="text-[hsl(var(--brand-end))]">DevMatch</strong>{" "}
-              — a Tinder-style platform for developers to connect and
+              - a Tinder-style platform for developers to connect and
               collaborate. From real-time Socket.io chat to Razorpay premium
               memberships, I built this product to empower devs to find
               meaningful collabs.
@@ -86,11 +86,11 @@ const MeetDev = () => {
 
             <ul className="mt-5 space-y-2 text-sm text-gray-400">
               <li>
-                🚀 Final-year BTech student with strong DSA skills (C++, 1450+
+                🚀 Final-year BTech student with strong DSA skills (C++, 450+
                 problems)
               </li>
-              <li>🧠 Built Nexume - AI Resume Builder (Gemini API + Strapi)</li>
-              <li>⚙️ MERN stack, AWS EC2, Vercel, Razorpay, TailwindCSS</li>
+              <li>🧠 Built CareerPilot - AI-Powered Career Advancement Platform</li>
+              <li>⚙️ C++, JavaScript, TypeScript, MERN Stack, TailwindCSS, AWS EC2</li>
               <li>🎯 Passionate about startups, dev tools, and clean UI</li>
             </ul>
 
