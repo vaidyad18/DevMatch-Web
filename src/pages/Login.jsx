@@ -6,7 +6,6 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { BASE_URL } from "../lib/constants";
 import LiquidEther from "../components/LiquidEther";
-import { GoogleLogin } from "@react-oauth/google"; // 👇
 
 const Login = () => {
   const [emailId, setEmailId] = useState("");
@@ -187,23 +186,6 @@ const Login = () => {
               <p className="text-gray-500 text-sm mx-3">or</p>
               <div className="flex-1 h-[1px] bg-gray-300"></div>
             </div>
-
-            {/* Google Button */}
-            <button
-              onClick={() =>
-                (window.location.href = "http://localhost:7777/api/auth/google")
-              }
-              className="mt-5 inline-flex items-center justify-center gap-3 w-full h-11
-               bg-white border border-gray-300 text-gray-700 font-medium rounded-md
-               shadow-sm hover:bg-gray-100 transition-all duration-150 ease-in-out"
-            >
-              <img
-                src="https://www.svgrepo.com/show/355037/google.svg"
-                alt="Google logo"
-                className="w-5 h-5"
-              />
-              Continue with Google
-            </button>
           </div>
 
           <p className="mt-6 text-center text-sm text-gray-600">

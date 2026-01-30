@@ -150,7 +150,7 @@ export default function Home() {
                   showBorder={false}
                   className="custom-class"
                 >
-                  <span className="font-bold">collaborator</span>
+                  <span className="font-bold cursor-text">collaborator</span>
                 </GradientText>
               </h1>
               <p className="mt-4 text-lg text-gray-300 max-w-2xl mx-auto">

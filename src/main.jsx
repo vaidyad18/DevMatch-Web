@@ -18,7 +18,6 @@ import MeetDev from "./pages/MeetDev.jsx";
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 import Memberships from "./pages/Memberships.jsx";
 import Chat from "./pages/Chat.jsx";
-import { GoogleOAuthProvider } from "@react-oauth/google";
 import AuthSuccess from "./pages/AuthSuccess.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
 
@@ -89,11 +88,9 @@ const appRouter = createBrowserRouter([
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
     <ThemeProvider>
       <Provider store={appStore}>
         <RouterProvider router={appRouter} />
       </Provider>
     </ThemeProvider>
-  </GoogleOAuthProvider>
 );

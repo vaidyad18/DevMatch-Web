@@ -37,7 +37,6 @@ function App() {
   const isFeedPage = location.pathname.startsWith("/feed");
   const isLoginSignUp = location.pathname.startsWith("/login") || location.pathname.startsWith("/signup");
 
-
   return (
     <div>
       {!isChatPage && !isFeedPage && !isLoginSignUp && <Navbar />}

@@ -14,7 +14,6 @@ import {
   LayoutGrid,
   MessageSquare,
 } from "lucide-react";
-import LOGO from "../assets/logo.png";
 
 const Navbar = () => {
   const user = useSelector((store) => store.user);
@@ -203,16 +202,16 @@ const Navbar = () => {
           <div className="px-5 py-5 flex flex-col gap-4 text-center">
             {!user ? (
               <>
-                <Link to="/signup" onClick={() => setOpen(false)}>
-                  <button className="w-full px-4 py-2 text-sm font-medium text-gray-300 rounded-md border border-white/20 hover:bg-white/10 transition">
-                    Signup
-                  </button>
-                </Link>
-                <Link to="/login" onClick={() => setOpen(false)}>
-                  <button className="w-full px-4 py-2 text-sm font-medium text-white bg-white/10 border border-white/20 rounded-md hover:bg-white/15 transition">
-                    Join DevMatch
-                  </button>
-                </Link>
+                <Link to="/login">
+                <button
+                  className="px-5 py-2 text-sm font-medium text-white 
+                    rounded-sm transition 
+                    bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] 
+                    hover:opacity-90 shadow-[0_0_10px_rgba(0,0,0,0.3)]"
+                >
+                  Get Started
+                </button>
+              </Link>
               </>
             ) : (
               <>

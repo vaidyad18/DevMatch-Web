@@ -68,7 +68,9 @@ const Memberships = () => {
       const res = await axios.get(BASE_URL + "/premium/verify", {
         withCredentials: true,
       });
-      if (res.data.isPremium) setIsUserPremium(true);
+      if (res.data.isPremium) {
+        setIsUserPremium(true);
+      }
     } catch (err) {
       console.error(err);
     }
@@ -124,16 +126,44 @@ const Memberships = () => {
   };
 
   if (isUserPremium) {
-    return (
-      <div className="min-h-screen grid place-items-center bg-black text-center text-white">
-        <Crown className="mx-auto h-12 w-12 text-yellow-400 mb-4" />
-        <h2 className="text-3xl font-bold">You're already a Member!</h2>
-        <p className="text-gray-400 mt-2">
-          Thanks for testing Razorpay integration ✨
+  return (
+    <div className="min-h-screen grid place-items-center pt-20 bg-black text-white px-6">
+      <div className="max-w-md text-center">
+        <Crown className="mx-auto h-14 w-14 text-yellow-300 mb-4" />
+
+        <h2 className="text-4xl font-semibold">Welcome, Premium Member</h2>
+
+        <p className="text-gray-400 mt-3 leading-relaxed">
+          You’ve unlocked all premium features. Enjoy everything DevMatch offers.
         </p>
+
+        <div className="mt-8 space-y-3 text-left bg-zinc-900/50 p-5 rounded-xl border border-zinc-800">
+          <h3 className="text-lg font-medium text-yellow-300">Your Plan Benefits</h3>
+
+          <ul className="space-y-2 text-gray-300 text-sm">
+            <li>• DevMatch feed</li>
+            <li>• Live chat</li>
+            <li>• Unlimited messaging</li>
+            <li>• Unlimited swipes</li>
+            <li>• Meet the developer of DevMatch</li>
+          </ul>
+        </div>
+
+        <p className="text-gray-500 text-sm mt-6">
+          Thanks for testing the Razorpay integration ✨
+        </p>
+
+        <button
+          onClick={() => navigate("/feed")}
+          className="mt-3 mb-6 px-6 py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-semibold rounded-xl transition-all"
+        >
+          Start Swiping
+        </button>
       </div>
-    );
-  }
+    </div>
+  );
+}
+
 
   return (
     <div className="relative min-h-screen bg-black text-white overflow-hidden flex items-start pt-28 pb-20">
@@ -159,7 +189,6 @@ const Memberships = () => {
           Choose Your Membership
         </motion.h1>
 
-        {/* 🔥 NOTICE ABOUT TEST MODE */}
         <div className="mt-6 flex items-center gap-3 text-center bg-white/5 px-5 py-3 rounded-xl border border-white/10 backdrop-blur-md">
           <Info className="h-5 w-5 text-blue-400" />
           <p className="text-gray-300 text-sm">
@@ -176,7 +205,6 @@ const Memberships = () => {
           Pick any plan to test the payment flow.
         </motion.p>
 
-        {/* 3-column layout */}
         <div className="grid md:grid-cols-3 gap-10 max-w-6xl w-full mt-14">
           {plans.map((plan, i) => (
             <motion.div

@@ -166,7 +166,6 @@ const Connections = () => {
   const connectionsCount = Array.isArray(connections) ? connections.length : 0;
   const requestsCount = Array.isArray(requests) ? requests.length : 0;
 
-  // Handle empty states
   const emptyText =
     tab === "connections"
       ? q
