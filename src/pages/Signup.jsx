@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { User, Mail, Lock, Eye, EyeOff, UserPlus } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, UserPlus, Loader2 } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "../lib/constants";
 import { useDispatch } from "react-redux";
@@ -14,6 +14,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const etherRef = useRef(null);
 
   const validateEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -21,7 +22,7 @@ const Signup = () => {
   const validate = () => {
     const e = {};
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{8,}$/;
 
     if (!firstName.trim()) e.firstName = "First name is required";
     if (!lastName.trim()) e.lastName = "Last name is required";
@@ -41,6 +42,7 @@ const Signup = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (!validate()) return;
+    setLoading(true);
     try {
       const res = await axios.post(
         BASE_URL + "/signup",
@@ -51,6 +53,8 @@ const Signup = () => {
       navigate("/profile");
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -240,13 +244,18 @@ const Signup = () => {
             {/* Submit */}
             <button
               type="submit"
+              disabled={loading}
               className="mt-4 inline-flex w-full items-center justify-center gap-2
                 rounded-md h-11 text-white font-medium
                 bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
-                hover:opacity-95"
+                hover:opacity-95 disabled:opacity-60"
             >
-              <UserPlus className="h-4 w-4" />
-              Create account
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-white" />
+              ) : (
+                <UserPlus className="h-4 w-4" />
+              )}
+              {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
 

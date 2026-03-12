@@ -15,6 +15,7 @@ import {
   ChevronDown,
   ImageIcon,
   Trash2,
+  Loader2,
 } from "lucide-react";
 import UserCard from "../components/UserCard";
 import LiquidEther from "../components/LiquidEther";
@@ -25,6 +26,7 @@ import { addUser } from "../utils/userSlice";
 import { ToastContainer, toast, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import BackButton from "../components/BackButton";
+import CustomSelect from "../components/CustomSelect";
 
 const normalizeUrl = (val) => {
   if (!val) return "";
@@ -48,7 +50,7 @@ const isHttpUrl = (val) => {
 
 const onlyDigits = (s) => (s || "").toString().replace(/\D/g, "");
 
-function SkillsInput({ value = [], onChange }) {
+function SkillsInput({ value = [], onChange, submitted }) {
   const [input, setInput] = useState("");
 
   const addSkill = (raw) => {
@@ -77,9 +79,11 @@ function SkillsInput({ value = [], onChange }) {
   return (
     <div className="sm:col-span-2">
       <label className="mb-1.5 block text-sm font-medium text-gray-400">
-        Skills
+        Skills <span className="text-red-500">*</span>
       </label>
-      <div className="rounded-md border p-2 flex flex-wrap gap-2 bg-[#0c0c0c]/70 backdrop-blur-md">
+      <div className={`rounded-md border p-2 flex flex-wrap gap-2 bg-[#0c0c0c]/70 backdrop-blur-md transition-all duration-200 ${
+        submitted && value.length < 2 ? "border-red-500" : "border-gray-800 hover:border-gray-700"
+      }`}>
         {value.map((tag, i) => (
           <span
             key={i}
@@ -113,6 +117,9 @@ function SkillsInput({ value = [], onChange }) {
           Add
         </button>
       </div>
+      {submitted && value.length < 2 && (
+        <p className="text-red-500 text-[10px] mt-1 ml-1">Add at least 2 skills.</p>
+      )}
     </div>
   );
 }
@@ -159,7 +166,26 @@ const EditProfile = ({ user }) => {
   const [githubURL, setGithubURL] = useState(user?.github ?? "");
   const [website, setWebsite] = useState(user?.website ?? "");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    if (user) {
+      setFirstName(user?.firstName ?? "");
+      setLastName(user?.lastName ?? "");
+      setGender(user?.gender ?? "");
+      setAge(user?.age ?? 18);
+      setMobile(user?.mobile ? String(user.mobile) : "");
+      setTagline(user?.description ?? "Hey there! I am using DevMatch.");
+      setPhotoURL(user?.photoURL ?? "");
+      setSkills(Array.isArray(user?.skills) ? user.skills : []);
+      setRole(user?.role ?? "Student");
+      setExperience(user?.experience ?? "Fresher");
+      setLinkedin(user?.linkedin ?? "");
+      setGithubURL(user?.github ?? "");
+      setWebsite(user?.website ?? "");
+    }
+  }, [user]);
 
   useEffect(() => {
     if (photoURL && typeof photoURL !== "string") {
@@ -234,6 +260,7 @@ const EditProfile = ({ user }) => {
       return;
     }
 
+    setLoading(true);
     try {
       const formData = new FormData();
 
@@ -273,6 +300,8 @@ const EditProfile = ({ user }) => {
         position: "bottom-right",
         transition: Bounce,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -317,19 +346,22 @@ const EditProfile = ({ user }) => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-gray-400">
-                  First name
+                  First name <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     placeholder="Eg. John"
-                    className={`w-full h-11 rounded-md px-10 border ${
-                      errors.firstName ? "border-red-400" : "border-gray-300"
+                    className={`w-full h-11 rounded-md px-10 border bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                      submitted && errors.firstName ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                     }`}
                   />
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
+                {submitted && errors.firstName && (
+                  <p className="text-red-500 text-[10px] mt-1 ml-1">{errors.firstName}</p>
+                )}
               </div>
 
               <div>
@@ -341,7 +373,7 @@ const EditProfile = ({ user }) => {
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     placeholder="Eg. Harley"
-                    className="w-full h-11 rounded-md px-10 border border-gray-300"
+                    className="w-full h-11 rounded-md px-10 border border-gray-800 bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 hover:border-gray-700"
                   />
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
@@ -349,62 +381,61 @@ const EditProfile = ({ user }) => {
 
               <div className="sm:col-span-2">
                 <label className="mb-1.5 block text-sm font-medium text-gray-400">
-                  Tagline
+                  Tagline <span className="text-red-500">*</span>
                 </label>
                 <input
                   value={tagline}
                   onChange={(e) => setTagline(e.target.value.slice(0, 100))}
-                  className={`w-full h-11 rounded-md px-3 border ${
-                    errors.tagline ? "border-red-400" : "border-gray-300"
+                  className={`w-full h-11 rounded-md px-3 border bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                    submitted && errors.tagline ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                   }`}
                 />
                 <div className="flex justify-between text-xs mt-1 text-gray-500">
-                  <span>Max 100 chars</span>
+                  <div className="flex flex-col gap-1">
+                    <span>Max 100 chars</span>
+                    {submitted && errors.tagline && (
+                      <p className="text-red-500 text-[10px]">{errors.tagline}</p>
+                    )}
+                  </div>
                   <span>{tagline.length}/100</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-[1fr_auto_2fr] gap-4 sm:col-span-2">
-                <div>
-                  <label className="mb-1.5 block text-sm font-medium text-gray-400">
-                    Gender
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={gender}
-                      onChange={(e) => setGender(e.target.value)}
-                      className={`w-full h-11 rounded-md border bg-[#0d0d0d]/70 text-gray-200 pl-10 pr-10 ${
-                        errors.gender ? "border-red-400" : "border-gray-300"
-                      }`}
-                    >
-                      <option value="" disabled>
-                        Choose gender
-                      </option>
-                      {GENDER_OPTIONS.map((g) => (
-                        <option key={g}>{g}</option>
-                      ))}
-                    </select>
+                <CustomSelect
+                  value={gender}
+                  options={GENDER_OPTIONS}
+                  onChange={(e) => setGender(e.target.value)}
+                  placeholder="Choose gender"
+                  label={
+                    <span>
+                      Gender <span className="text-red-500">*</span>
+                    </span>
+                  }
+                  error={errors.gender}
+                  submitted={submitted}
+                  icon={Users}
+                />
 
-                    <Users className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  </div>
-                </div>
 
                 <div>
                   <label className="mb-1.5 block text-sm font-medium text-gray-400">
-                    Age
+                    Age <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
                       type="number"
                       value={age}
                       onChange={(e) => setAge(e.target.value)}
-                      className={`w-24 h-11 rounded-md border pl-10 ${
-                        errors.age ? "border-red-400" : "border-gray-300"
+                      className={`w-24 h-11 rounded-md border pl-10 bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                        submitted && errors.age ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                       }`}
                     />
                     <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
+                  {submitted && errors.age && (
+                    <p className="text-red-500 text-[10px] mt-1 ml-1">{errors.age}</p>
+                  )}
                 </div>
 
                 <div>
@@ -416,12 +447,15 @@ const EditProfile = ({ user }) => {
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
                       placeholder="Eg. 9876543210"
-                      className={`w-full h-11 rounded-md border pl-10 ${
-                        errors.mobile ? "border-red-400" : "border-gray-300"
+                      className={`w-full h-11 rounded-md border pl-10 bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                        submitted && errors.mobile ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                       }`}
                     />
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                   </div>
+                  {submitted && errors.mobile && (
+                    <p className="text-red-500 text-[10px] mt-1 ml-1">{errors.mobile}</p>
+                  )}
                 </div>
               </div>
 
@@ -432,8 +466,8 @@ const EditProfile = ({ user }) => {
 
                 <div
                   onClick={() => fileInputRef.current?.click()}
-                  className={`flex items-center justify-between gap-4 p-3 rounded-md border ${
-                    errors.photoURL ? "border-red-400" : "border-gray-300"
+                  className={`flex items-center justify-between gap-4 p-3 rounded-md border transition-all duration-200 ${
+                    submitted && errors.photoURL ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                   } bg-[#0d0d0d]/50 cursor-pointer`}
                 >
                   <div className="flex items-center gap-3">
@@ -501,59 +535,45 @@ const EditProfile = ({ user }) => {
                   className="hidden"
                 />
 
-                {errors.photoURL && (
-                  <p className="text-xs text-red-500 mt-1">{errors.photoURL}</p>
+                {submitted && errors.photoURL && (
+                  <p className="text-[10px] text-red-500 mt-1 ml-1">{errors.photoURL}</p>
                 )}
               </div>
 
-              <SkillsInput value={skills} onChange={setSkills} />
-
-              {submitted && skills.length < 2 && (
-                <p className="sm:col-span-2 -mt-2 text-xs text-red-500">
-                  Add at least 2 skills.
-                </p>
-              )}
+              <SkillsInput value={skills} onChange={setSkills} submitted={submitted} />
 
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-gray-400">
-                  Role
+                  Role <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <input
                     value={role}
                     onChange={(e) => setRole(e.target.value)}
-                    className={`w-full h-11 rounded-md border border-gray-300 px-10 ${
-                      errors.role ? "border-red-400" : ""
+                    className={`w-full h-11 rounded-md border px-10 bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                      submitted && errors.role ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                     }`}
                   />
                   <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
+                {submitted && errors.role && (
+                  <p className="text-red-500 text-[10px] mt-1 ml-1">{errors.role}</p>
+                )}
               </div>
-
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-gray-400">
-                  Experience
-                </label>
-                <div className="relative">
-                  <select
-                    value={experience}
-                    onChange={(e) => setExperience(e.target.value)}
-                    className={`w-full h-11 rounded-md border bg-[#0d0d0d]/70 text-gray-200 pl-10 pr-10 ${
-                      errors.experience ? "border-red-400" : "border-gray-300"
-                    }`}
-                  >
-                    <option value="" disabled>
-                      Select Experience
-                    </option>
-                    {EXPERIENCE_OPTIONS.map((opt) => (
-                      <option key={opt}>{opt}</option>
-                    ))}
-                  </select>
-
-                  <BadgeCheck className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                </div>
-              </div>
+              <CustomSelect
+                value={experience}
+                options={EXPERIENCE_OPTIONS}
+                onChange={(e) => setExperience(e.target.value)}
+                placeholder="Select Experience"
+                label={
+                  <span>
+                    Experience <span className="text-red-500">*</span>
+                  </span>
+                }
+                error={errors.experience}
+                submitted={submitted}
+                icon={BadgeCheck}
+              />
 
               <div className="sm:col-span-2">
                 <label className="mb-1.5 block text-sm font-medium text-gray-400">
@@ -564,12 +584,15 @@ const EditProfile = ({ user }) => {
                     value={linkedin}
                     onChange={(e) => setLinkedin(e.target.value)}
                     placeholder="Eg. https://www.linkedin.com/in/username"
-                    className={`w-full h-11 rounded-md border border-gray-300 px-10 ${
-                      errors.linkedin ? "border-red-400" : ""
+                    className={`w-full h-11 rounded-md border px-10 bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                      submitted && errors.linkedin ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                     }`}
                   />
                   <Linkedin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
+                {submitted && errors.linkedin && (
+                  <p className="text-red-500 text-[10px] mt-1 ml-1">{errors.linkedin}</p>
+                )}
               </div>
 
               <div className="sm:col-span-2">
@@ -581,12 +604,15 @@ const EditProfile = ({ user }) => {
                     value={githubURL}
                     onChange={(e) => setGithubURL(e.target.value)}
                     placeholder="Eg. https://github.com/username"
-                    className={`w-full h-11 rounded-md border border-gray-300 px-10 ${
-                      errors.github ? "border-red-400" : ""
+                    className={`w-full h-11 rounded-md border px-10 bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                      submitted && errors.github ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                     }`}
                   />
                   <Github className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
+                {submitted && errors.github && (
+                  <p className="text-red-500 text-[10px] mt-1 ml-1">{errors.github}</p>
+                )}
               </div>
 
               <div className="sm:col-span-2">
@@ -598,21 +624,30 @@ const EditProfile = ({ user }) => {
                     value={website}
                     onChange={(e) => setWebsite(e.target.value)}
                     placeholder="Eg. https://yourdomain.com"
-                    className={`w-full h-11 rounded-md border border-gray-300 px-10 ${
-                      errors.website ? "border-red-400" : ""
+                    className={`w-full h-11 rounded-md border px-10 bg-transparent text-gray-200 transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] placeholder-gray-500 ${
+                      submitted && errors.website ? "border-red-500" : "border-gray-800 hover:border-gray-700"
                     }`}
                   />
                   <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 </div>
+                {submitted && errors.website && (
+                  <p className="text-red-500 text-[10px] mt-1 ml-1">{errors.website}</p>
+                )}
               </div>
             </div>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleSave}
-                className="inline-flex items-center justify-center rounded-md h-11 px-4 text-white font-medium bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]"
+                disabled={loading}
+                className="inline-flex items-center justify-center rounded-md h-11 px-4 text-white font-medium bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] disabled:opacity-70"
               >
-                <Save className="h-4 w-4 mr-2" /> Save changes
+                {loading ? (
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                ) : (
+                  <Save className="h-4 w-4 mr-2" />
+                )}
+                {loading ? "Saving..." : "Save changes"}
               </button>
               <button
                 onClick={handleCancel}

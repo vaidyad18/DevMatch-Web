@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, LogIn, Eye, EyeOff, Loader2 } from "lucide-react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -13,6 +13,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const etherRef = useRef(null);
 
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ const Login = () => {
       setEmailError("Please enter a valid email address before logging in");
       return;
     }
+    setLoading(true);
     try {
       const res = await axios.post(
         BASE_URL + "/login",
@@ -46,6 +48,8 @@ const Login = () => {
       setError(
         err?.response?.data || "Something went wrong. Please try again."
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -168,14 +172,18 @@ const Login = () => {
             {/* Submit */}
             <button
               type="submit"
-              disabled={!!emailError}
+              disabled={!!emailError || loading}
               className="mt-4 inline-flex w-full items-center justify-center gap-2
                          rounded-md h-11 text-white font-medium
                          bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
                          hover:opacity-95 disabled:opacity-60"
             >
-              <LogIn className="h-4 w-4" />
-              Login
+              {loading ? (
+                <Loader2 className="h-4 w-4 animate-spin text-white" />
+              ) : (
+                <LogIn className="h-4 w-4" />
+              )}
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 

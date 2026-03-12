@@ -1,14 +1,16 @@
 import Navbar from "./components/Navbar";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 import { BASE_URL } from "./lib/constants";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { addUser } from "./utils/userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Footer from "./components/Footer";
 import ThemeSwitcher from "./components/ThemeSwitcher";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();  
@@ -24,18 +26,30 @@ function App() {
       if (err.status === 401) {
         navigate("/");
       }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
     if (!user) {
       fetchUser();
+    } else {
+      setIsLoading(false);
     }
   }, []);
 
   const isChatPage = location.pathname.startsWith("/chat");
   const isFeedPage = location.pathname.startsWith("/feed");
   const isLoginSignUp = location.pathname.startsWith("/login") || location.pathname.startsWith("/signup");
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="h-10 w-10 text-[hsl(var(--brand-end))] animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div>
