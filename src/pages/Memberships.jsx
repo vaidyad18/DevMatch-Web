@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { CheckCircle2, Star, Crown, Info } from "lucide-react";
+import { CheckCircle2, Star, Crown, Info, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import LiquidEther from "../components/LiquidEther";
 import { BASE_URL } from "../lib/constants";
@@ -54,8 +54,9 @@ const plans = [
 ];
 
 const Memberships = () => {
-  const [isUserPremium, setIsUserPremium] = useState(false);
   const user = useSelector((store) => store.user);
+  const [loading, setLoading] = useState(true);
+  const [buyingPlan, setBuyingPlan] = useState(null); // track which plan is being purchased
   const navigate = useNavigate();
   const etherRef = useRef(null);
 
@@ -64,6 +65,7 @@ const Memberships = () => {
   }, []);
 
   const verifyUserPremium = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(BASE_URL + "/premium/verify", {
         withCredentials: true,
@@ -73,12 +75,15 @@ const Memberships = () => {
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleBuy = async (type) => {
     try {
       if (!user) return navigate("/login");
+      setBuyingPlan(type);
 
       const orderRes = await axios.post(
         `${BASE_URL}/payment/create`,
@@ -116,14 +121,31 @@ const Memberships = () => {
             alert("Verification error");
           }
         },
+        modal: {
+          ondismiss: function () {
+            setBuyingPlan(null);
+          },
+        },
       };
 
       new window.Razorpay(options).open();
     } catch (err) {
       console.error(err);
       alert("Could not start payment");
+      setBuyingPlan(null);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen grid place-items-center bg-black text-white px-6">
+        <div className="text-center">
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-gray-500 mb-4" />
+          <p className="text-gray-400">Verifying your status...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (isUserPremium) {
   return (
@@ -254,16 +276,20 @@ const Memberships = () => {
 
               <button
                 onClick={() => handleBuy(plan.type)}
-                className={`mt-5 w-full py-3.5 rounded-xl font-semibold text-white transition
+                disabled={buyingPlan !== null}
+                className={`mt-5 w-full py-3.5 rounded-xl font-semibold text-white transition flex items-center justify-center gap-2
                   ${
                     plan.highlightLevel === 3
                       ? "bg-gradient-to-r from-yellow-600 to-yellow-500"
                       : plan.highlightLevel === 2
                       ? "bg-gradient-to-r from-blue-600 to-blue-700"
                       : "bg-gradient-to-r from-gray-700 to-gray-800"
-                  }`}
+                  } ${buyingPlan !== null ? "opacity-70 cursor-not-allowed" : "hover:opacity-90"}`}
               >
-                Get {plan.name}
+                {buyingPlan === plan.type ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : null}
+                {buyingPlan === plan.type ? "Processing..." : `Get ${plan.name}`}
               </button>
             </motion.div>
           ))}

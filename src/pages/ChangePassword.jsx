@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Lock, Eye, EyeOff, KeyRound } from "lucide-react";
+import { Lock, Eye, EyeOff, KeyRound, Loader2 } from "lucide-react";
 import axios from "axios";
 import { BASE_URL } from "../lib/constants";
 import LiquidEther from "../components/LiquidEther";
@@ -12,6 +12,7 @@ const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [showOld, setShowOld] = useState(false);
   const [showNew, setShowNew] = useState(false);
+  const [loading, setLoading] = useState(false);
   const etherRef = useRef(null);
   const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ const ChangePassword = () => {
       });
       return;
     }
-
+    setLoading(true);
     try {
       const res = await axios.patch(
         `${BASE_URL}/profile/password`,
@@ -51,6 +52,8 @@ const ChangePassword = () => {
         autoClose: 2500,
         theme: "dark",
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -161,12 +164,18 @@ const ChangePassword = () => {
           {/* Submit button */}
           <button
             type="submit"
+            disabled={loading}
             className="w-full mt-3 inline-flex items-center justify-center gap-2
             h-11 rounded-md font-medium text-white
             bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
-            hover:opacity-95 transition-all"
+            hover:opacity-95 transition-all disabled:opacity-70"
           >
-            Update Password
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <KeyRound className="h-4 w-4" />
+            )}
+            {loading ? "Updating..." : "Update Password"}
           </button>
         </form>
       </div>

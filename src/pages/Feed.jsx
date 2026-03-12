@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed, removeUserFromFeed } from "../utils/feedSlice";
 import UserCard from "../components/UserCard";
-import { Heart, Users, X, Keyboard, MousePointer2 } from "lucide-react";
+import { Heart, Users, X, Keyboard, MousePointer2, Loader2 } from "lucide-react";
 import BackButton from "../components/BackButton";
 import {
   motion,
@@ -21,9 +21,11 @@ const Feed = () => {
   const dispatch = useDispatch();
   const feed = useSelector((store) => store.feed) || [];
   const [exitingId, setExitingId] = useState(null);
+  const [loading, setLoading] = useState(true);
   const etherRef = useRef(null);
 
   const fetchFeed = async () => {
+    setLoading(true);
     try {
       const res = await axios.get(BASE_URL + "/user/feed", {
         withCredentials: true,
@@ -31,6 +33,8 @@ const Feed = () => {
       dispatch(addFeed(res?.data?.data || []));
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -87,6 +91,29 @@ const Feed = () => {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [dispatchSwipe]);
+
+  if (loading) {
+    return (
+      <div className="relative min-h-screen flex items-center justify-center bg-black text-white overflow-hidden">
+        <div ref={etherRef} className="absolute inset-0 z-0 pointer-events-auto">
+          <LiquidEther
+            colors={["#5227FF", "#FF9FFC", "#B19EEF"]}
+            mouseForce={20}
+            cursorSize={100}
+            isViscous={false}
+            resolution={0.5}
+            autoDemo={false}
+            autoIntensity={2.2}
+          />
+        </div>
+        <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
+        <div className="relative z-20 text-center">
+          <Loader2 className="h-12 w-12 mx-auto animate-spin text-gray-500 mb-4" />
+          <p className="text-gray-400">Finding developers for you...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!feed) return null;
 

@@ -4,7 +4,7 @@ import { BASE_URL } from "../lib/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnection } from "../utils/connectionSlice";
 import { addRequest, removeRequest } from "../utils/requestSlice";
-import { Users, Search, Check, X, MessageCircle } from "lucide-react";
+import { Users, Search, Check, X, MessageCircle, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -55,6 +55,7 @@ const Connections = () => {
 
   const [tab, setTab] = useState("connections");
   const [q, setQ] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const etherRef = useRef(null);
 
@@ -82,8 +83,12 @@ const Connections = () => {
   };
 
   useEffect(() => {
-    fetchConnections();
-    fetchRequests();
+    const loadData = async () => {
+      setLoading(true);
+      await Promise.all([fetchConnections(), fetchRequests()]);
+      setLoading(false);
+    };
+    loadData();
   }, []);
 
   // Liquid Ether setup
@@ -248,7 +253,12 @@ const Connections = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           </div>
 
-          {tab === "connections" ? (
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-gray-500" />
+              <p className="mt-4 text-gray-400">Loading your network...</p>
+            </div>
+          ) : tab === "connections" ? (
             filteredConnections.length > 0 ? (
               <ul className="grid gap-4 md:grid-cols-2">
                 {filteredConnections.map((c) => {
