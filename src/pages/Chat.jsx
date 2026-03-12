@@ -176,7 +176,7 @@ const Chat = () => {
 
       {/* Chat Layout */}
       <div className="relative z-20 mx-auto max-w-6xl px-4 py-10">
-        <div className="fixed top-10 left-4 z-50">
+        <div className={`absolute top-28 left-6 sm:left-10 z-50 ${targetUserId ? "hidden md:block" : "block"}`}>
           <BackButton />
         </div>
 
@@ -231,9 +231,14 @@ const Chat = () => {
           </aside>
 
           {/* Chat window */}
-          <section className="flex min-h-0 flex-col bg-[#0d0d0d]/80 backdrop-blur-xl">
+          <section className={`flex min-h-0 flex-col bg-[#0d0d0d]/80 backdrop-blur-xl ${targetUserId ? "flex" : "hidden md:flex"}`}>
             {/* Header */}
             <div className="shrink-0 flex items-center gap-3 px-4 sm:px-6 h-16 border-b border-gray-800 bg-[#111]/70 backdrop-blur-xl">
+              {targetUserId && (
+                <Link to="/chat" className="md:hidden mr-1 p-2 -ml-2 rounded-full hover:bg-white/10 transition text-gray-400">
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+              )}
               {targetUserId ? (
                 <>
                   <div className="h-10 w-10 rounded-full overflow-hidden bg-[#222]/70 border border-gray-700">
@@ -335,10 +340,10 @@ const Chat = () => {
 
                   <button
                     type="submit"
-                    className="hidden sm:inline-flex items-center gap-2 bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-95 transition shadow-sm text-white font-semibold px-4 h-11 rounded-lg"
+                    className="inline-flex items-center gap-2 bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-95 transition-all duration-200 shadow-sm text-white font-semibold px-4 sm:px-5 h-11 rounded-lg cursor-pointer hover:scale-105 active:scale-95"
                   >
                     <Send className="h-4 w-4" />
-                    Send
+                    <span className="hidden sm:inline">Send</span>
                   </button>
                 </form>
               </div>

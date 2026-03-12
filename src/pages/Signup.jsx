@@ -103,7 +103,7 @@ const Signup = () => {
         className="absolute inset-0 z-10 pointer-events-none"
       />
 
-      <div className="relative z-20 w-[90%] md:w-[1100px] min-h-[600px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col md:flex-row">
+      <div className="relative z-20 w-[95%] sm:w-[90%] md:w-[1100px] my-10 min-h-[600px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col md:flex-row">
         {/* Left side illustration */}
         <div className="bg-gradient-to-br from-black via-[hsl(var(--brand-start)/0.4)] to-[hsl(var(--brand-end)/0.4)] md:w-7/12 w-full flex flex-col justify-center items-center text-center p-10">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">
@@ -125,7 +125,7 @@ const Signup = () => {
 
           <form className="space-y-4" onSubmit={onSubmit} noValidate>
             {/* First name */}
-            <div className="flex gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-gray-800">
                   First name
@@ -224,7 +224,7 @@ const Signup = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer transition-all duration-200 hover:text-[hsl(var(--brand-end))]"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -248,7 +248,7 @@ const Signup = () => {
               className="mt-4 inline-flex w-full items-center justify-center gap-2
                 rounded-md h-11 text-white font-medium
                 bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
-                hover:opacity-95 disabled:opacity-60"
+                hover:opacity-95 disabled:opacity-60 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-white" />
@@ -270,7 +270,7 @@ const Signup = () => {
               onClick={() => {
                 window.location.href = `${BASE_URL}/auth/google`;
               }}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white h-11 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white h-11 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path

@@ -76,7 +76,7 @@ const Footer = () => {
         </div>
 
         {/* Footer Columns */}
-        <div className="mt-12 grid gap-10 md:grid-cols-4">
+        <div className="mt-12 grid gap-10 sm:grid-cols-2 md:grid-cols-4">
           {/* Brand Info */}
           <div className="space-y-4">
               <span className="text-2xl honk font-semibold text-white">

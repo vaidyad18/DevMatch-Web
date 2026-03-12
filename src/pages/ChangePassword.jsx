@@ -103,7 +103,7 @@ const ChangePassword = () => {
       <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
 
       {/* Main card */}
-      <div className="relative z-20 w-[90%] max-w-[500px] bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.4)] p-8 text-white">
+      <div className="relative z-20 w-[95%] sm:w-[90%] max-w-[500px] bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_30px_rgba(0,0,0,0.4)] p-8 text-white">
         <h1 className="text-3xl font-bold text-center mb-2">Change Password</h1>
         <p className="text-center text-gray-400 text-sm mb-6">
           Secure your account with a new password
@@ -127,7 +127,7 @@ const ChangePassword = () => {
               <button
                 type="button"
                 onClick={() => setShowOld((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer transition-all duration-200 hover:text-[hsl(var(--brand-end))]"
               >
                 {showOld ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -151,7 +151,7 @@ const ChangePassword = () => {
               <button
                 type="button"
                 onClick={() => setShowNew((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer transition-all duration-200 hover:text-[hsl(var(--brand-end))]"
               >
                 {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -168,7 +168,7 @@ const ChangePassword = () => {
             className="w-full mt-3 inline-flex items-center justify-center gap-2
             h-11 rounded-md font-medium text-white
             bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
-            hover:opacity-95 transition-all disabled:opacity-70"
+            hover:opacity-95 transition-all duration-200 cursor-pointer hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70"
           >
             {loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />

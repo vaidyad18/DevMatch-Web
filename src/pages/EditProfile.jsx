@@ -93,7 +93,7 @@ function SkillsInput({ value = [], onChange, submitted }) {
             <button
               type="button"
               onClick={() => removeSkill(i)}
-              className="opacity-70 hover:opacity-100 text-gray-300"
+              className="opacity-70 hover:opacity-100 text-gray-300 cursor-pointer transition-all duration-200 hover:scale-110 active:scale-90"
             >
               <X className="h-3 w-3" />
             </button>
@@ -111,7 +111,7 @@ function SkillsInput({ value = [], onChange, submitted }) {
         <button
           type="button"
           onClick={() => addSkill(input)}
-          className="inline-flex items-center gap-1 rounded-md border border-[hsl(var(--brand-end)/.5)] text-white px-2 py-1 text-xs"
+          className="inline-flex items-center gap-1 rounded-md border border-[hsl(var(--brand-end)/.5)] text-white px-2 py-1 text-xs cursor-pointer transition-all duration-200 hover:scale-105 hover:bg-[hsl(var(--brand-end)/.1)] active:scale-95"
         >
           <Plus className="h-3 w-3" />
           Add
@@ -331,7 +331,7 @@ const EditProfile = ({ user }) => {
 
       <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
       <div className="text-center pt-28 mb-8">
-        <div className="absolute top-24 left-28">
+        <div className="absolute top-28 left-6 sm:left-10 z-50">
           <BackButton />
         </div>
         <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-transparent bg-clip-text">
@@ -401,7 +401,7 @@ const EditProfile = ({ user }) => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-[1fr_auto_2fr] gap-4 sm:col-span-2">
+              <div className="flex flex-col sm:grid sm:grid-cols-[1fr_auto_2fr] gap-4 sm:col-span-2">
                 <CustomSelect
                   value={gender}
                   options={GENDER_OPTIONS}
@@ -503,7 +503,7 @@ const EditProfile = ({ user }) => {
                           e.stopPropagation();
                           removeSelectedPhoto();
                         }}
-                        className="inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs border border-gray-700 text-gray-200"
+                        className="inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs border border-gray-700 text-gray-200 cursor-pointer transition-all duration-200 hover:scale-105 hover:bg-gray-800 active:scale-95"
                       >
                         <Trash2 className="h-4 w-4" />
                         Remove
@@ -515,7 +515,7 @@ const EditProfile = ({ user }) => {
                           e.stopPropagation();
                           fileInputRef.current?.click();
                         }}
-                        className="inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs border border-[hsl(var(--brand-end)/.5)] text-white"
+                        className="inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs border border-[hsl(var(--brand-end)/.5)] text-white cursor-pointer transition-all duration-200 hover:scale-105 hover:bg-[hsl(var(--brand-end)/.1)] active:scale-95"
                       >
                         <Plus className="h-4 w-4" />
                         Upload
@@ -640,7 +640,7 @@ const EditProfile = ({ user }) => {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="inline-flex items-center justify-center rounded-md h-11 px-4 text-white font-medium bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] disabled:opacity-70"
+                className="inline-flex items-center justify-center rounded-md h-11 px-6 text-white font-medium bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] disabled:opacity-70 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
               >
                 {loading ? (
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -651,7 +651,7 @@ const EditProfile = ({ user }) => {
               </button>
               <button
                 onClick={handleCancel}
-                className="inline-flex items-center justify-center rounded-md h-11 px-4 border bg-[#0d0d0d]/70 text-gray-300"
+                className="inline-flex items-center justify-center rounded-md h-11 px-6 border border-gray-700 bg-[#0d0d0d]/70 text-gray-300 cursor-pointer transition-all duration-200 hover:scale-105 hover:bg-[#1a1a1a] active:scale-95"
               >
                 Cancel
               </button>

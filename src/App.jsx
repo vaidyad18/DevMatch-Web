@@ -23,8 +23,11 @@ function App() {
       });
       dispatch(addUser(res.data));
     } catch (err) {
-      if (err.status === 401) {
-        navigate("/");
+      console.error(err);
+      // If we are on a protected route and fetch fails, send to login
+      const publicRoutes = ["/", "/login", "/signup", "/privacy-policy", "/terms-&-conditions", "/cancellation-&-refund-policy"];
+      if (!publicRoutes.includes(location.pathname)) {
+        navigate("/login");
       }
     } finally {
       setIsLoading(false);

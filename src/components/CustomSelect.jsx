@@ -43,7 +43,7 @@ const CustomSelect = ({
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          className={`w-full h-11 rounded-md border text-left px-10 flex items-center justify-between transition-all duration-200 bg-[#0d0d0d]/70 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] ${
+          className={`w-full h-11 rounded-md border text-left px-10 flex items-center justify-between transition-all duration-200 cursor-pointer bg-[#0d0d0d]/70 text-gray-200 focus:outline-none focus:ring-1 focus:ring-[hsl(var(--brand-end))] ${
             isError ? "border-red-500" : "border-gray-800 hover:border-gray-700"
           }`}
         >
@@ -69,7 +69,7 @@ const CustomSelect = ({
                   key={option}
                   type="button"
                   onClick={() => handleSelect(option)}
-                  className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between transition-colors hover:bg-white/5 ${
+                  className={`w-full px-4 py-2.5 text-left text-sm flex items-center justify-between transition-all duration-200 cursor-pointer hover:bg-white/5 ${
                     value === option ? "text-[hsl(var(--brand-end))] bg-white/5" : "text-gray-300"
                   }`}
                 >

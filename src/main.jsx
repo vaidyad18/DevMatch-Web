@@ -21,6 +21,8 @@ import Chat from "./pages/Chat.jsx";
 import AuthSuccess from "./pages/AuthSuccess.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
 
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+
 const appRouter = createBrowserRouter([
   {
     path: "/",
@@ -40,7 +42,11 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <Profile />,
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "meet-dev",
@@ -48,11 +54,19 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "feed",
-        element: <Feed />,
+        element: (
+          <ProtectedRoute>
+            <Feed />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "connections",
-        element: <Connections />,
+        element: (
+          <ProtectedRoute>
+            <Connections />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "privacy-policy",
@@ -68,20 +82,36 @@ const appRouter = createBrowserRouter([
       },
       {
         path: "memberships",
-        element: <Memberships />,
+        element: (
+          <ProtectedRoute>
+            <Memberships />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "chat",
-        element: <Chat />,
+        element: (
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "chat/:targetUserId",
-        element: <Chat />,
+        element: (
+          <ProtectedRoute>
+            <Chat />
+          </ProtectedRoute>
+        ),
       },
       { path: "auth/success", element: <AuthSuccess /> },
       {
         path: "change-password",
-        element: <ChangePassword />,
+        element: (
+          <ProtectedRoute>
+            <ChangePassword />
+          </ProtectedRoute>
+        ),
       }
     ],
   },

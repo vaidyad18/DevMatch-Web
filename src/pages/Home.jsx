@@ -136,7 +136,7 @@ export default function Home() {
                 <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]" />
                 DevMatch - Connect. Code. Collaborate.
               </span>
-              <h1 className="mt-4 text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight">
+              <h1 className="mt-4 text-3xl sm:text-4xl md:text-6xl font-extrabold leading-[1.1] tracking-tight">
                 Meet your next
                 <GradientText
                   colors={[
@@ -161,18 +161,18 @@ export default function Home() {
               <div className="mt-8 flex flex-wrap gap-3 justify-center">
                 <Link
                   to={user ? "/feed" : "/login"}
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-11 px-5 text-white bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-90 backdrop-blur-sm transition"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-11 px-5 text-white bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-90 backdrop-blur-sm transition"
                 >
                   Start Networking <ArrowRight className="h-4 w-4" />
                 </Link>
                 <Link
                   to="/meet-dev"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-11 px-5 border border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium h-11 px-5 border border-white/30 bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm transition"
                 >
                   Meet the Developer
                 </Link>
               </div>
-              <div className="mt-10 flex items-center justify-center gap-20 text-sm">
+              <div className="mt-10 flex flex-wrap items-center justify-center gap-8 sm:gap-20 text-sm">
                 {[
                   {
                     icon: <Users className="h-4 w-4" />,
@@ -283,13 +283,13 @@ export default function Home() {
               together.
             </p>
             <div className="flex flex-col mt-10 sm:flex-row gap-4 justify-center">
-              <Link to="/signup">
-                <button className="flex bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-95 transition shadow-sm font-semibold text-lg text-white px-10 py-3 rounded-lg items-center space-x-2">
-                  <Star className="w-5 h-5" /> <span>Join DevMatch Free</span>
+              <Link to={user ? "/feed" : "/signup"}>
+                <button className="flex bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] hover:opacity-95 shadow-sm font-semibold text-lg text-white px-10 py-3 rounded-lg items-center space-x-2 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
+                  <Star className="w-5 h-5" /> <span>{user ? "Start Connecting" : "Join DevMatch Free"}</span>
                 </button>
               </Link>
               <Link to="/memberships">
-                <button className="flex items-center shadow-sm font-semibold text-lg border border-white/20 bg-white/10 hover:bg-white/20 px-10 py-3 rounded-lg space-x-2 text-white">
+                <button className="flex items-center shadow-sm font-semibold text-lg border border-white/20 bg-white/10 hover:bg-white/20 px-10 py-3 rounded-lg space-x-2 text-white cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]">
                   <Zap className="w-5 h-5" /> <span>View Premium Features</span>
                 </button>
               </Link>

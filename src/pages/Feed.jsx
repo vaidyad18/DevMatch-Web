@@ -54,7 +54,11 @@ const Feed = () => {
   };
 
   useEffect(() => {
-    if (!feed || feed.length === 0) fetchFeed();
+    if (!feed || feed.length === 0) {
+      fetchFeed();
+    } else {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -135,7 +139,7 @@ const Feed = () => {
         <div id="ether-overlay" className="absolute inset-0 z-10 pointer-events-none" />
 
         <div className="relative z-20 text-center px-6">
-          <div className="fixed top-10 left-4 z-50">
+          <div className="absolute top-28 left-6 sm:left-10 z-50">
             <BackButton />
           </div>
 
@@ -172,7 +176,7 @@ const Feed = () => {
 
       {/* Content */}
       <div className="relative z-20 flex flex-col lg:flex-row gap-10  pb-10 items-center w-full max-w-6xl px-4">
-        <div className="fixed top-10 left-4 z-50">
+        <div className="absolute top-28 left-6 sm:left-10 z-50">
           <BackButton />
         </div>
 
@@ -252,7 +256,7 @@ const TriggerButton = ({ children, onTrigger, direction }) => (
   <button
     type="button"
     onClick={onTrigger}
-    className={`h-14 w-14 flex items-center justify-center rounded-full transition cursor-pointer shadow-md ${
+    className={`h-14 w-14 flex items-center justify-center rounded-full transition-all duration-200 cursor-pointer shadow-md hover:scale-110 active:scale-90 ${
       direction === "left"
         ? "bg-red-900/20 hover:bg-red-900/40 border border-red-800"
         : "bg-green-900/20 hover:bg-green-900/40 border border-green-800"

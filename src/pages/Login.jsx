@@ -99,7 +99,7 @@ const Login = () => {
       />
 
       {/* Main Login Card */}
-      <div className="relative z-20 w-[90%] md:w-[1100px] min-h-[600px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col md:flex-row">
+      <div className="relative z-20 w-[95%] sm:w-[90%] md:w-[1100px] my-10 min-h-[600px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden flex flex-col-reverse md:flex-row">
         {/* Left: Form Section */}
         <div className="flex-1 flex flex-col justify-center bg-white text-black px-8 sm:px-12 py-10">
           <h1 className="text-3xl font-bold text-gray-900 text-center">
@@ -156,7 +156,7 @@ const Login = () => {
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer transition-all duration-200 hover:text-[hsl(var(--brand-end))]"
                 >
                   {showPassword ? (
                     <EyeOff className="h-4 w-4" />
@@ -176,7 +176,7 @@ const Login = () => {
               className="mt-4 inline-flex w-full items-center justify-center gap-2
                          rounded-md h-11 text-white font-medium
                          bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))]
-                         hover:opacity-95 disabled:opacity-60"
+                         hover:opacity-95 disabled:opacity-60 cursor-pointer transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               {loading ? (
                 <Loader2 className="h-4 w-4 animate-spin text-white" />
@@ -199,7 +199,7 @@ const Login = () => {
               onClick={() => {
                 window.location.href = `${BASE_URL}/auth/google`;
               }}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white h-11 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all duration-200"
+              className="mt-6 flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-white h-11 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path

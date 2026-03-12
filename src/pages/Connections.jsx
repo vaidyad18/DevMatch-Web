@@ -198,7 +198,7 @@ const Connections = () => {
 
       {/* Main Content */}
       <div className="relative z-20 mx-auto max-w-5xl px-4 pb-20 pt-10">
-        <div className="absolute top-24  z-50">
+        <div className="absolute top-28 left-6 sm:left-10 z-50">
           <BackButton />
         </div>
 
@@ -212,7 +212,7 @@ const Connections = () => {
           <div className="mt-5 inline-flex rounded-full p-1 border border-gray-700 bg-[#0d0d0d]/70 backdrop-blur-xl shadow-sm">
             <button
               onClick={() => setTab("connections")}
-              className={`relative cursor-pointer inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium transition ${
+              className={`relative cursor-pointer inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
                 tab === "connections"
                   ? "bg-[hsl(var(--brand-start))]/20 text-white"
                   : "text-gray-400 hover:text-gray-200"
@@ -223,20 +223,20 @@ const Connections = () => {
                 {connectionsCount}
               </span>
             </button>
-
-            <button
-              onClick={() => setTab("requests")}
-              className={`relative cursor-pointer inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium transition ${
-                tab === "requests"
-                  ? "bg-[hsl(var(--brand-start))]/20 text-white"
-                  : "text-gray-400 hover:text-gray-200"
-              }`}
-            >
-              Requests
-              <span className="ml-1 inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full text-xs border border-gray-700 bg-[#111]/70 text-gray-300">
-                {requestsCount}
-              </span>
-            </button>
+ 
+             <button
+               onClick={() => setTab("requests")}
+               className={`relative cursor-pointer inline-flex items-center gap-2 px-4 h-10 rounded-full text-sm font-medium transition-all duration-200 hover:scale-105 active:scale-95 ${
+                 tab === "requests"
+                   ? "bg-[hsl(var(--brand-start))]/20 text-white"
+                   : "text-gray-400 hover:text-gray-200"
+               }`}
+             >
+               Requests
+               <span className="ml-1 inline-flex items-center justify-center h-6 min-w-6 px-2 rounded-full text-xs border border-gray-700 bg-[#111]/70 text-gray-300">
+                 {requestsCount}
+               </span>
+             </button>
           </div>
         </div>
 
@@ -260,7 +260,7 @@ const Connections = () => {
             </div>
           ) : tab === "connections" ? (
             filteredConnections.length > 0 ? (
-              <ul className="grid gap-4 md:grid-cols-2">
+              <ul className="grid gap-4 sm:grid-cols-2">
                 {filteredConnections.map((c) => {
                   const { firstName, lastName, age, gender, description, photoURL } = c;
                   const name = `${firstName || ""} ${lastName || ""}`.trim();
@@ -294,7 +294,7 @@ const Connections = () => {
                         </div>
 
                         <Link to={`/chat/${c._id}`}>
-                          <button className="bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-white px-4 py-1 rounded-md flex items-center gap-2">
+                          <button className="bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-white px-4 py-1.5 rounded-md flex items-center gap-2 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95">
                             <MessageCircle className="h-4" /> Chat
                           </button>
                         </Link>
@@ -307,8 +307,9 @@ const Connections = () => {
               <EmptyBox text={emptyText} />
             )
           ) : filteredRequests.length > 0 ? (
-            <ul className="grid gap-4 md:grid-cols-2">
-              {filteredRequests.map((r) => {
+            <ul className="grid gap-4 sm:grid-cols-2">
+
+                {filteredRequests.map((r) => {
                 const u = r.fromUserId || {};
                 const { firstName, lastName, age, gender, description, photoURL } = u;
                 const name = `${firstName || ""} ${lastName || ""}`.trim();
@@ -338,13 +339,13 @@ const Connections = () => {
                           <div className="mt-3 flex gap-2">
                             <button
                               onClick={() => reviewRequest("accepted", firstName, r._id)}
-                              className="bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-white px-3 py-1 rounded-md flex items-center gap-1"
+                              className="bg-gradient-to-r from-[hsl(var(--brand-start))] to-[hsl(var(--brand-end))] text-white px-4 py-1.5 rounded-md flex items-center gap-1 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
                             >
                               <Check className="h-4" /> Accept
                             </button>
                             <button
                               onClick={() => reviewRequest("rejected", firstName, r._id)}
-                              className="border border-gray-700 px-3 py-1 rounded-md text-gray-400 flex items-center gap-1 hover:bg-[#1a1a1a]/70"
+                              className="border border-gray-700 px-4 py-1.5 rounded-md text-gray-400 flex items-center gap-1 hover:bg-[#1a1a1a]/70 cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95"
                             >
                               <X className="h-4" /> Reject
                             </button>
